@@ -608,10 +608,17 @@ class AnalysisRequestViewView(BrowserView):
         # Some sample fields are editable here
         if workflow.getInfoFor(sample, 'cancellation_state') == "cancelled":
             allow_sample_edit = False
+            allow_ar_edit = False
         else:
             edit_states = ['to_be_sampled', 'to_be_preserved', 'sample_due']
-            allow_sample_edit = checkPermission(ManageSamples, sample) \
+            ar_edit_states = ['sample_registered', 'to_be_sampled', 'sampled',
+                              'to_be_preserved', 'sample_due', 'attachment_due',
+                              'sample_received', 'to_be_verified']
+            allow_sample_edit = checkPermission(EditSample, sample) \
                 and workflow.getInfoFor(sample, 'review_state') in edit_states
+            allow_ar_edit = checkPermission(EditAR, self.context) \
+                and workflow.getInfoFor(self.context, 'review_state') in ar_edit_states \
+                and workflow.getInfoFor(self.context, 'cancellation_state') == 'active'
 
         SamplingWorkflowEnabled =\
             self.context.bika_setup.getSamplingWorkflowEnabled()
@@ -628,6 +635,11 @@ class AnalysisRequestViewView(BrowserView):
                     inactive_state = 'active')])
 
         batch = self.context.getBatch()
+        if allow_ar_edit:
+            contactlabel = "<a href='#' id='open_cc_browser'>%s</a>" % \
+                          (self.context.translate(_('Contact Person')))
+        else:
+            contactlabel = self.context.translate(_('Contact Person'))
 
         self.header_columns = 3
         self.header_rows = [
@@ -644,8 +656,7 @@ class AnalysisRequestViewView(BrowserView):
              'condition':True,
              'type': 'text'},
             {'id': 'Contact',
-             'title': "<a href='#' id='open_cc_browser'>%s</a>" % \
-                      (self.context.translate(_('Contact Person'))),
+             'title': contactlabel,
              'allow_edit': False,
              'value': "<input name='cc_uids' type='hidden' id='cc_uids' value='%s'/>\
                        <a href='%s'><span name='primary_contact' id='primary_contact' value='%s'>%s</span></a>\
@@ -663,19 +674,19 @@ class AnalysisRequestViewView(BrowserView):
              'type': 'text'},
             {'id': 'ClientSampleID',
              'title': _('Client SID'),
-             'allow_edit': True,
+             'allow_edit': allow_ar_edit,
              'value': sample.getClientSampleID(),
              'condition':True,
              'type': 'text'},
             {'id': 'ClientReference',
              'title': _('Client Reference'),
-             'allow_edit': True,
+             'allow_edit': allow_ar_edit,
              'value': sample.getClientReference(),
              'condition':True,
              'type': 'text'},
             {'id': 'ClientOrderNumber',
              'title': _('Client Order'),
-             'allow_edit': True,
+             'allow_edit': allow_ar_edit,
              'value': self.context.getClientOrderNumber(),
              'condition':True,
              'type': 'text'},
@@ -778,7 +789,7 @@ class AnalysisRequestViewView(BrowserView):
              'type': 'boolean'},
             {'id': 'InvoiceExclude',
              'title': _('Invoice Exclude'),
-             'allow_edit': True,
+             'allow_edit': allow_ar_edit,
              'value': self.context.getInvoiceExclude(),
              'condition':True,
              'type': 'boolean'},
@@ -789,7 +800,8 @@ class AnalysisRequestViewView(BrowserView):
              'condition':self.context.bika_setup.getDryMatterService(),
              'type': 'boolean'},
         ]
-        self.header_buttons = [{'name':'save_button', 'title':_('Save')}]
+        if allow_sample_edit or allow_ar_edit:
+            self.header_buttons = [{'name':'save_button', 'title':_('Save')}]
 
         ## handle_header table submit
         if form.get('header_submitted', None):
@@ -915,7 +927,7 @@ class AnalysisRequestViewView(BrowserView):
                                                   {'id':'retract'},
                                                   {'id':'verify'}]
         qcview.show_workflow_action_buttons = True
-        qcview.show_select_column = True
+        qcview.show_select_column = False
         self.qctable = qcview.contents_table()
 
         # If is a retracted AR, show the link to child AR and show a warn msg
