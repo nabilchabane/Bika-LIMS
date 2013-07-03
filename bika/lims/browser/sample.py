@@ -794,6 +794,11 @@ class SamplesView(BikaListingView):
         mtool = getToolByName(self.context, 'portal_membership')
         member = mtool.getAuthenticatedMember()
         translate = self.context.translate
+        roles = member.getRoles()
+        hideclientlink = 'RegulatoryInspector' in roles \
+            and 'Manager' not in roles \
+            and 'LabManager' not in roles \
+            and 'LabClerk' not in roles
 
         for x in range(len(items)):
             if not items[x].has_key('obj'): continue
@@ -805,8 +810,9 @@ class SamplesView(BikaListingView):
                 ["<a href='%s'>%s</a>" % (o.absolute_url(), o.Title())
                  for o in obj.getAnalysisRequests()])
             items[x]['Client'] = obj.aq_parent.Title()
-            items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % \
-                (obj.aq_parent.absolute_url(), obj.aq_parent.Title())
+            if hideclientlink == False:
+                items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % \
+                    (obj.aq_parent.absolute_url(), obj.aq_parent.Title())
             items[x]['Creator'] = self.user_fullname(obj.Creator())
 
             items[x]['DateReceived'] = self.ulocalized_time(obj.getDateReceived())

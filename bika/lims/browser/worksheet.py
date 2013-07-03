@@ -627,6 +627,14 @@ class AddAnalysesView(BikaListingView):
 
     def folderitems(self):
         items = BikaListingView.folderitems(self)
+        mtool = getToolByName(self.context, 'portal_membership')
+        member = mtool.getAuthenticatedMember()
+        roles = member.getRoles()
+        hideclientlink = 'RegulatoryInspector' in roles \
+            and 'Manager' not in roles \
+            and 'LabManager' not in roles \
+            and 'LabClerk' not in roles
+
         for x in range(len(items)):
             if not items[x].has_key('obj'):
                 continue
@@ -653,8 +661,9 @@ class AddAnalysesView(BikaListingView):
                  (url, items[x]['getRequestID'])
 
             items[x]['Client'] = client.Title()
-            items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % \
-                 (client.absolute_url(), client.Title())
+            if hideclientlink == False:
+                items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % \
+                    (client.absolute_url(), client.Title())
         return items
 
     def getServices(self):

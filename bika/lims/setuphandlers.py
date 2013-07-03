@@ -158,7 +158,7 @@ class BikaGenerator:
 
         if 'RegulatoryInspectors' not in portal_groups.listGroupIds():
             portal_groups.addGroup('RegulatoryInspectors', title = "Regulatory Inspectors",
-                roles = ['Member', 'RegulatoryInspector', ])
+                roles = ['Member', 'RegulatoryInspector'])
 
     def setupPermissions(self, portal):
         """ Set up some suggested role to permission mappings.
