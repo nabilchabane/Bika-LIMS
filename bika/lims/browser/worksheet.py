@@ -527,6 +527,14 @@ class ManageResultsView(BrowserView):
         items.sort(lambda x, y: cmp(x[1].lower(), y[1].lower()))
         return DisplayList(list(items))
 
+    def isAssignmentAllowed(self):
+        checkPermission = self.context.portal_membership.checkPermission
+        workflow = getToolByName(self.context, 'portal_workflow')
+        review_state = workflow.getInfoFor(self.context, 'review_state', '')
+        edit_states = ['open', 'attachment_due', 'to_be_verified']
+        return review_state in edit_states \
+            and checkPermission(EditWorksheet, self.context)
+
 class AddAnalysesView(BikaListingView):
     implements(IViewView)
     template = ViewPageTemplateFile("templates/worksheet_add_analyses.pt")
