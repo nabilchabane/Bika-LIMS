@@ -923,12 +923,11 @@ class AnalysisRequestViewView(BrowserView):
                                 show_categories=self.context.bika_setup.getCategoriseAnalysisServices())
         qcview.allow_edit = False
         qcview.show_select_column = False
+        qcview.show_workflow_action_buttons = False
         qcview.form_id = "%s_qcanalyses"
         qcview.review_states[0]['transitions'] = [{'id':'submit'},
                                                   {'id':'retract'},
                                                   {'id':'verify'}]
-        qcview.show_workflow_action_buttons = True
-        qcview.show_select_column = False
         self.qctable = qcview.contents_table()
 
         # If is a retracted AR, show the link to child AR and show a warn msg
