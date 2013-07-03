@@ -12,10 +12,12 @@ from bika.lims.browser.bika_listing import WorkflowAction
 from bika.lims.utils import getUsers
 from bika.lims.utils import to_utf8 as _c
 from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
 import plone
 import json
 import zope
+from bika.lims.permissions import EditWorksheet
 
 class WorksheetFolderWorkflowAction(WorkflowAction):
     """ Workflow actions taken in the WorksheetFolder
@@ -57,7 +59,7 @@ class WorksheetFolderWorkflowAction(WorkflowAction):
 
 class WorksheetFolderListingView(BikaListingView):
 
-    implements(IFolderContentsView)
+    implements(IFolderContentsView, IViewView)
 
     template = ViewPageTemplateFile("templates/worksheetfolder.pt")
 
@@ -226,6 +228,11 @@ class WorksheetFolderListingView(BikaListingView):
                         'CreationDate',
                         'state_title']},
         ]
+
+    def isAddWorksheetAdditionAllowed(self):
+        pm = getToolByName(self.context, "portal_membership")
+        checkPermission = self.context.portal_membership.checkPermission
+        return checkPermission(EditWorksheet, self.context)
 
     def folderitems(self):
         wf = getToolByName(self, 'portal_workflow')
