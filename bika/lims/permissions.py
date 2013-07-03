@@ -121,3 +121,7 @@ EditAR = 'BIKA: Edit AR'
 #       'sample_due', 'sample_received', 'to_be_verified', 'attachment_due'
 EditSamplePartition = 'BIKA: Edit Sample Partition'
 
+# Edit Client
+# ----------------------------------------------
+# Allows access to 'Edit' and 'Contacts' tabs from Client View 
+EditClient = 'BIKA: Edit Client'
