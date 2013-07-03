@@ -921,7 +921,8 @@ class AnalysisRequestViewView(BrowserView):
         qcview = self.createQCAnalyesView(ar,
                                 self.request,
                                 show_categories=self.context.bika_setup.getCategoriseAnalysisServices())
-        qcview.allow_edit = True
+        qcview.allow_edit = False
+        qcview.show_select_column = False
         qcview.form_id = "%s_qcanalyses"
         qcview.review_states[0]['transitions'] = [{'id':'submit'},
                                                   {'id':'retract'},
