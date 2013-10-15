@@ -23,79 +23,92 @@ from bika.lims.interfaces import ISupplyOrder
 from bika.lims.browser.widgets import DateTimeWidget
 
 schema = BikaSchema.copy() + Schema((
-    ReferenceField(
-      'Contact',
-      required = 1,
-      vocabulary = 'getContacts',
-      default_method = 'getContactUIDForUser',
-      vocabulary_display_path_bound = sys.maxint,
-      allowed_types = ('Contact',),
-      referenceClass = HoldingReference,
-      relationship = 'SupplyOrderContact',
-      widget=ReferenceWidget(
-        render_own_label=True,
-      ),
+  ReferenceField(
+    'Contact',
+    required = 1,
+    vocabulary = 'getContacts',
+    default_method = 'getContactUIDForUser',
+    vocabulary_display_path_bound = sys.maxint,
+    allowed_types = ('Contact',),
+    referenceClass = HoldingReference,
+    relationship = 'SupplyOrderContact',
+    widget=ReferenceWidget(
+      render_own_label=True,
     ),
-    StringField('OrderNumber',
-                required = 1,
-                default_method = 'getId',
-                searchable = True,
-                widget = StringWidget(
-                    label = _("Order Number"),
-                    ),
-                ),
-    ReferenceField('Invoice',
-                   vocabulary_display_path_bound = sys.maxint,
-                   allowed_types = ('Invoice',),
-                   referenceClass = HoldingReference,
-                   relationship = 'OrderInvoice',
-                   ),
-    DateTimeField(
-      'OrderDate',
-      required=1,
-      default_method='current_date',
-      widget=DateTimeWidget(
-        label=_("Order Date"),
-        size=12,
-        render_own_label=True,
-        visible={
-          'edit': 'visible',
-          'view': 'visible',
-          'add': 'visible',
-          'secondary': 'invisible'
-        },
-      ),
+  ),
+  StringField(
+    'OrderNumber',
+    required = 1,
+    default_method = 'getId',
+    searchable = True,
+    widget = StringWidget(
+      label = _("Order Number"),
     ),
-    DateTimeField('DateDispatched',
-                  widget = DateTimeWidget(
-                      label = _("Date Dispatched"),
-                      ),
-                  ),
-    TextField('Remarks',
-        searchable = True,
-        default_content_type = 'text/x-web-intelligent',
-        allowable_content_types = ('text/x-web-intelligent',),
-        default_output_type="text/html",
-        widget = TextAreaWidget(
-            macro = "bika_widgets/remarks",
-            label = _('Remarks'),
-            append_only = True,
-        ),
+  ),
+  ReferenceField(
+    'Invoice',
+    vocabulary_display_path_bound = sys.maxint,
+    allowed_types = ('Invoice',),
+    referenceClass = HoldingReference,
+    relationship = 'OrderInvoice',
+  ),
+  DateTimeField(
+    'OrderDate',
+    required=1,
+    default_method='current_date',
+    widget=DateTimeWidget(
+      label=_("Order Date"),
+      size=12,
+      render_own_label=True,
+      visible={
+        'edit': 'visible',
+        'view': 'visible',
+        'add': 'visible',
+        'secondary': 'invisible'
+      },
     ),
-    ComputedField('ClientUID',
-                  expression = 'here.aq_parent.UID()',
-                  widget = ComputedWidget(
-                      visible = False,
-                      ),
-                  ),
-    ComputedField('ProductUID',
-                  expression = 'context.getProductUIDs()',
-                  widget = ComputedWidget(
-                      visible = False,
-                      ),
-                  ),
-),
-)
+  ),
+  DateTimeField(
+    'DateDispatched',
+    widget = DateTimeWidget(
+      label = _("Date Dispatched"),
+    ),
+  ),
+  TextField(
+    'Remarks',
+    searchable = True,
+    default_content_type = 'text/x-web-intelligent',
+    allowable_content_types = ('text/x-web-intelligent',),
+    default_output_type="text/html",
+    widget = TextAreaWidget(
+      macro = "bika_widgets/remarks",
+      label = _('Remarks'),
+      append_only = True,
+    ),
+  ),
+  ComputedField(
+    'ClientUID',
+    expression = 'here.aq_parent.UID()',
+    widget = ComputedWidget(
+      visible = False,
+    ),
+  ),
+  ComputedField(
+    'ProductUID',
+    expression = 'context.getProductUIDs()',
+    widget = ComputedWidget(
+      visible = False,
+    ),
+  ),
+  ComputedField(
+    'Invoiced',
+    expression='here.getInvoice() and True or False',
+    default=False,
+    widget=ComputedWidget(
+        visible=False,
+    ),
+  ),
+),)
 
 schema['title'].required = False
 
@@ -107,12 +120,6 @@ class SupplyOrder(BaseFolder):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
-
-    def hasBeenInvoiced(self):
-        if self.getInvoice():
-            return True
-        else:
-            return False
 
     def Title(self):
         """ Return the OrderNumber as title """
@@ -151,8 +158,8 @@ class SupplyOrder(BaseFolder):
              for obj in self.objectValues('SupplyOrderItem')])
 
     security.declareProtected(View, 'getVAT')
-    def getVAT(self):
-        """ Compute VAT """
+    def getVATTotal(self):
+        """ Compute VAT Total """
         return self.getTotal() - self.getSubtotal()
 
     security.declareProtected(View, 'getTotal')

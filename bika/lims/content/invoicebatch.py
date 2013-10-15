@@ -175,6 +175,7 @@ class InvoiceBatch(BaseFolder):
         orders = self.portal_catalog(query)
         # Make list of clients from found ARs and Orders
         clients = {}
+        import pdb; pdb.set_trace()
         for rs in (ars, orders):
             for p in rs:
                 obj = p.getObject()
