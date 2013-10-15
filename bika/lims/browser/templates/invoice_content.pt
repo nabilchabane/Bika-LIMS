@@ -1,4 +1,4 @@
-<table class="invoice-header" summary="Invoice Info">
+<table class="table-header" summary="Invoice Info">
 	<tbody>
 		<tr>
 			<th i18n:translate="">Invoice To</th>
@@ -46,7 +46,7 @@
 	</tbody>
 </table>
 
-<table class="invoice-items" summary="Analyses List">
+<table class="table-items" summary="Analyses List">
 	<thead>
 		<tr>
 			<th i18n:translate="">Date</th>

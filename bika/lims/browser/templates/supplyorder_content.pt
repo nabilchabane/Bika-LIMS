@@ -1,4 +1,4 @@
-<table class="invoice-header">
+<table class="table-header">
 	<tbody>
 		<tr>
 			<th i18n:translate="">Order Date</th>
@@ -10,7 +10,7 @@
 		</tr>
 	</tbody>
 </table>
-<table class="invoice-items items">
+<table class="table-items">
 	<thead>
 		<tr>
 			<th i18n:translate="">Product</th>

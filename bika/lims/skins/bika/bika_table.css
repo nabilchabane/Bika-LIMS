@@ -1,78 +1,78 @@
-table.invoice-header {
+table.table-header {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-table.invoice-header tr {
+table.table-header tr {
 	line-height: 1.5em;
 }
 
-table.invoice-header th,
-table.invoice-header td {
+table.table-header th,
+table.table-header td {
 	padding: .25em;
 }
 
-table.invoice-items {
+table.table-items {
 	width: 100%;
 	margin-top: 25px;
 	border-collapse: collapse;
 }
 
-table.invoice-items thead tr {
+table.table-items thead tr {
 	border-top: 2px solid #ddd;
 	border-bottom: 2px solid #ddd;
 }
 
-table.invoice-items th {
+table.table-items th {
 	padding: .25em;
 	text-align: center;
 }
 
-table.invoice-items tr {
+table.table-items tr {
 	line-height: 1.5em;
 	border-bottom: 1px solid #ddd;
 }
 
-table.invoice-items tr.category {
+table.table-items tr.category {
 	font-weight: bold;
 	border-bottom-width: 2px;
 }
 
-table.invoice-items tr.totals {
+table.table-items tr.totals {
 	font-weight: bold;
 	border-bottom: 2px solid #ddd;
 	border-top: 2px solid #ddd;
 }
 
-table.invoice-items td:nth-child(1),
-table.invoice-items th:nth-child(1) {
+table.table-items td:nth-child(1),
+table.table-items th:nth-child(1) {
 	text-align: left;
 }
 
-table.invoice-items td {
+table.table-items td {
 	padding: .25em;
 	text-align: right;
 }
 
-table.invoice-items th.text, table.invoice-items td.text {
+table.table-items th.text, table.table-items td.text {
 	text-align: left;
 }
 
-table.invoice-items th.currency, table.invoice-items td.currency {
+table.table-items th.currency, table.table-items td.currency {
 	text-align: right;
 	width: 10%;
 }
 
-table.invoice-items th.center, table.invoice-items td.center {
+table.table-items th.center, table.table-items td.center {
 	text-align: center
 }
 
-table.invoice-items td.number {
+table.table-items td.number {
 	width: 100px;
 	text-align: center;
 }
 
-table.invoice-items td.number input {
+table.table-items td.number input {
 	width: 60%;
 	text-align: right;
 }

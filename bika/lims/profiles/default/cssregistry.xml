@@ -25,7 +25,7 @@
     insert-after="*"/>
 
 <stylesheet
-    id="bika_invoice.css"
+    id="bika_table.css"
     media="screen"
     rel="stylesheet"
     rendering="link"

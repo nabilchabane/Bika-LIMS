@@ -20,13 +20,13 @@
 		
 		<metal:core fill-slot="content-core">
 			<form id="supplyorder_edit" name="edit" method="post" action="" tal:define="errors python:{}">
-				<table class="invoice-header">
+				<table class="table-header">
 					<tbody>
 						<tal:field content="structure python:view.field(field=view.orderDate)" />
 						<tal:field content="structure python:view.field(field=view.contact)" />
 					</tbody>
 				</table>
-				<table class="invoice-items items">
+				<table class="table-items">
 					<thead>
 						<tr>
 							<th i18n:translate="">Product</th>
