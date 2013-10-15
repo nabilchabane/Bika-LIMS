@@ -3,9 +3,11 @@ from DateTime import DateTime
 
 def AfterTransitionEventHandler(instance, event):
 
-    action_id = event.transition.id
+	if event.transition:
+		action_id = event.transition.id
 
-    instance.setDateDispatched(DateTime())
-    instance.reindexObject()
+		if action_id is 'dispatch':
+			instance.setDateDispatched(DateTime())
+			instance.reindexObject()
 
-    return
+	return
