@@ -51,6 +51,7 @@ class BikaGenerator:
                        'worksheets',
                        'reports',
                        'queries',
+                       'supplyorders',
                        ):
             obj = portal._getOb(obj_id)
             obj.unmarkCreationFlag()
