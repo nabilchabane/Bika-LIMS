@@ -12,3 +12,4 @@ pricelists,PricelistFolder
 bika_setup,BikaSetup
 reports,ReportFolder
 queries,QueryFolder
+supplyorders,SupplyOrderFolder

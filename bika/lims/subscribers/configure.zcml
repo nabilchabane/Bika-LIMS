@@ -100,5 +100,11 @@
       handler="bika.lims.subscribers.calculation.AfterTransitionEventHandler"
     />
 
+    <!-- Workflow action event for dispatching Supply Orders -->
+    <subscriber
+      for="bika.lims.interfaces.ISupplyOrder
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler="bika.lims.subscribers.supplyorder.AfterTransitionEventHandler"
+    />
 
 </configure>
