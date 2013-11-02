@@ -1046,6 +1046,15 @@ msgstr ""
 # File: ../content/bikasetup.py, line: 184
 msgid "Categorise analysis services"
 msgstr ""
+
+msgid "EnableARSpecs_description"
+msgstr "Analysis specifications which are edited directly on the Analysis Request."
+#
+# File: ../content/bikasetup.py, line: 194
+msgid "DefaultARSpecs_description"
+msgstr "Choose the default specifications used for all AR views
+to display alerts and notifications.  These will also be applied when an AR
+is published in permanent media, e.g. PDF."
 #
 # File: ../browser/accreditation.py, line: 52
 # File: ../browser/referencesample.py, line: 58
