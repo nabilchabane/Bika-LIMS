@@ -2644,6 +2644,7 @@ class WidgetVisibility(_WV):
                 'Profile',
                 'SamplingDate',
                 'SampleType',
+                'Specification',
                 'SamplePoint',
                 'ClientOrderNumber',
                 'ClientReference',
@@ -2685,8 +2686,10 @@ class WidgetVisibility(_WV):
                 'MemberDiscount',
                 'Profile',
                 'ReportDryMatter',
+                'Specification',
                 'Sample',
                 'SamplePoint',
+                'Specification',
                 'SampleType',
                 'Template',
             ]
@@ -2711,15 +2714,18 @@ class WidgetVisibility(_WV):
                 'ReportDryMatter',
                 'Sample',
                 'SampleCondition',
-                'SamplePoint',
                 'SampleType',
+                'Specification',
                 'SamplingDate',
+                'SamplePoint',
                 'SamplingDeviation',
                 'Template',
             ]
         elif state in ('to_be_verified', 'verified', ):
             ret['header_table']['visible'].remove('DatePublished')
-            ret['edit']['visible'] = []
+            ret['edit']['visible'] = [
+                'PublicationSpecification',
+            ]
             ret['view']['visible'] = [
                 'Contact',
                 'CCContact',
@@ -2738,13 +2744,16 @@ class WidgetVisibility(_WV):
                 'Sample',
                 'SampleCondition',
                 'SamplePoint',
+                'Specification',
                 'SampleType',
                 'SamplingDate',
                 'SamplingDeviation',
                 'Template',
             ]
         elif state in ('published', ):
-            ret['edit']['visible'] = []
+            ret['edit']['visible'] = [
+                'PublicationSpecification',
+            ]
             ret['view']['visible'] = [
                 'AdHoc',
                 'Batch',
@@ -2761,6 +2770,7 @@ class WidgetVisibility(_WV):
                 'Sample',
                 'SampleCondition',
                 'SamplePoint',
+                'Specification',
                 'SampleType',
                 'SamplingDate',
                 'SamplingDeviation',

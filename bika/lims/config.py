@@ -60,6 +60,10 @@ ATTACHMENT_OPTIONS = DisplayList((
     ('p', _('Permitted')),
     ('n', _('Not Permitted')),
 ))
+DEFAULT_AR_SPECS = DisplayList((
+    ('ar_specs', _('Analysis Request Specifications')),
+    ('sampletype_specs', _('Sample Type Specifications')),
+))
 ARIMPORT_OPTIONS = DisplayList((
     ('c', _('Classic')),
     ('p', _('Profiles')),
