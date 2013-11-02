@@ -755,7 +755,7 @@ class AnalysisRequest(BaseFolder):
     def getTemplateTitle(self):
         return self.getTemplate().Title() if self.getTemplate() else ''
 
-    def setPublicationSpecification(self):
+    def setPublicationSpecification(self, value):
         "Never contains a value; this field is here for the UI."
         return None
 
