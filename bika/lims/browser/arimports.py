@@ -267,6 +267,10 @@ class ClientARImportAddView(BrowserView):
         cc_emails_invoice = ','.join(
                 [i.strip() for i in batch_headers[8].split(';')])
 
+        try:
+            numOfSamples = int(batch_headers[12])
+        except:
+            numOfSamples = 0
         arimport.edit(
             ImportOption='c',
             FileName=batch_headers[2],
@@ -279,6 +283,7 @@ class ClientARImportAddView(BrowserView):
             OrderID = batch_headers[9],
             QuoteID = batch_headers[10],
             SamplePoint = batch_headers[11],
+            NumberSamples = numOfSamples,
             Remarks = batch_remarks, 
             Analyses = sample_headers, 
             DateImported=DateTime(),
@@ -441,6 +446,10 @@ class ClientARImportAddView(BrowserView):
                 Remarks=item_remarks)
             if not valid_item:
                 valid_batch = False
+        if arimport.getNumberSamples() != len(aritems):
+            valid_batch = False
+            batch_remarks.append('\nNumber of samples specified (%s) does no match number listed (%s)' % (
+                        arimport.getNumberSamples(), len(aritems)))
         arimport.edit(
             Remarks=batch_remarks,
             Status=valid_batch)
