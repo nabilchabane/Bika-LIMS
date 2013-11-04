@@ -74,11 +74,6 @@ schema = BikaSchema.copy() + Schema((
             label = _("Contact Name"),
         ),
     ),
-    StringField('CCContactID',
-        widget = StringWidget(
-            label = _("Contact ID"),
-        ),
-    ),
     ReferenceField('Contact',
         allowed_types = ('Contact',),
         relationship = 'ARImportContact',
@@ -104,6 +99,11 @@ schema = BikaSchema.copy() + Schema((
             label = _("Client Email"),
         ),
     ),
+    StringField('CCContactID',
+        widget = StringWidget(
+            label = _("CC Contact ID"),
+        ),
+    ),
     ReferenceField('CCContact',
         allowed_types = ('Contact',),
         relationship = 'ARImportCCContact',
@@ -123,19 +123,19 @@ schema = BikaSchema.copy() + Schema((
                      ],
         ),
     ),
-    StringField('CCEmails',
+    StringField('CCNamesReport',
         widget = StringWidget(
-            label = _("CC Emails"),
+            label = _("Report Contact Names"),
         ),
     ),
-    StringField('InvoiceContactID',
+    StringField('CCEmailsReport',
         widget = StringWidget(
-            label = _("Invoice Contact ID"),
+            label = _("CC Email - Report"),
         ),
     ),
-    StringField('CCEmailInvoice',
+    StringField('CCEmailsInvoice',
         widget = StringWidget(
-            label = _("CC Email Invoice"),
+            label = _("CC Email - Invoice"),
         ),
     ),
     StringField('OrderID',
@@ -323,11 +323,14 @@ class ARImport(BaseFolder):
                 ClientReference = aritem.getClientRef(),
                 ClientSampleID = aritem.getClientSid(),
                 SampleType = aritem.getSampleType(),
-                SamplePoint = aritem.getSamplePoint(),
                 DateSampled = sample_date,
                 DateReceived = DateTime(),
                 )
             sample._renameAfterCreation()
+            sp_id = client.invokeFactory('SamplePoint', id=tmpID())
+            sp = client[sp_id]
+            sp.edit(title=self.getSamplePoint())
+            sample.setSamplePoint(self.getSamplePoint())
             sample.setSampleID(sample.getId())
             event.notify(ObjectInitializedEvent(sample))
             sample.at_post_create_script()
@@ -347,7 +350,7 @@ class ARImport(BaseFolder):
                 RequestID = ar_id,
                 Contact = self.getContact(),
                 CCContact = self.getCCContact(),
-                CCEmails = self.getCCEmails(),
+                CCEmails = self.getCCEmailsInvoice(),
                 ClientOrderNumber = self.getOrderID(),
                 ReportDryMatter = report_dry_matter,
                 Analyses = analyses
@@ -355,7 +358,6 @@ class ARImport(BaseFolder):
             ar.setSample(sample_uid)
             sample = ar.getSample()
             ar.setSampleType(sampletypeuid)
-            print ar.getSampleType()
             ar_uid = ar.UID()
             aritem.setAnalysisRequest(ar_uid)
             ars.append(ar_id)

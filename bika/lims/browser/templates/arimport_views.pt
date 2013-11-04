@@ -52,7 +52,7 @@
             tal:content="context/getContactName">JonesJJ</td>
         <th i18n:translate="label_ccemail">CC Email</th>
         <td class="left" tal:attributes="colspan python:right_col" 
-            tal:content="context/getCCEmails">x@y.com</td>
+            tal:content="context/getCCEmailsReport">x@y.com</td>
         </tr>
 
         <tr>
@@ -198,60 +198,52 @@ coming attractions
             <td class="left" tal:attributes="colspan python:right_col"
                 tal:content="context/ClientID">SmithTT</td>
         </tr>
-        <tr tal:define="contact context/getContact | nothing;
-                        global contact_found python:False;
-                        cccontact context/getCCContact | nothing;
-                        global cccontact_found python:False">
-            <tal:contact_found 
-                tal:condition="nocall:contact">
-            <th i18n:translate="label_contact">Contact</th>
+        <tr tal:define="contact context/getContact | nothing;">
+            <th i18n:translate="label_contact">Contact Name</th>
             <td class="left" tal:attributes="colspan python:left_col"
-                tal:define="global contact_found python:True"
                 tal:content="contact/Title">JonesJJ</td>
-            </tal:contact_found>
-            <tal:contact_not_found 
-                tal:condition="not:contact_found">
             <th i18n:translate="label_contactid">Contact ID</th>
-            <td class="left" tal:attributes="colspan python:left_col"
+            <td class="left" tal:attributes="colspan python:right_col"
                 tal:content="context/getContactID">JonesJJ</td>
-            </tal:contact_not_found>
-            <tal:cccontact_found tal:condition="nocall:cccontact">
-            <th i18n:translate="label_cc">CC</th>
-            <td class="left" tal:attributes="colspan python:right_col"
-                tal:define="global cccontact_found python:True"
-                tal:content="cccontact/Title">jonesba</td>
+        </tr>
+
+        <tr tal:define="cccontact context/getCCContact | nothing;">
+            <tal:cccontact_found tal:condition="cccontact">
+                <th i18n:translate="label_cc">CC</th>
+                <td class="left" tal:attributes="colspan python:left_col"
+                    tal:content="cccontact/Title">jonesba</td>
             </tal:cccontact_found>
-            <tal:cccontact_not_found 
-                tal:condition="not:cccontact_found">
-            <th i18n:translate="label_cccontactid">CCContact ID</th>
-            <td class="left" tal:attributes="colspan python:right_col"
-                tal:content="context/getCCContactID">JonesJJ</td>
+            <tal:cccontact_not_found tal:condition="not:cccontact">
+                <th i18n:translate="label_cccontactid">CC Contact ID</th>
+                <td class="left" tal:attributes="colspan python:left_col"
+                    tal:content="context/getCCContactID">JonesJJ</td>
             </tal:cccontact_not_found>
+            <th i18n:translate="label_blank"></th>
+            <td class="left"  tal:attributes="colspan python:right_col"></td>
         </tr>
 
         <tr>
-            <th i18n:translate="label_ccemails">CC Emails</th>
+            <th i18n:translate="label_ccemails">CC Emails - Report</th>
             <td class="left" tal:attributes="colspan python:left_col" 
-                tal:content="context/getCCEmails">x@y.com</td>
-            <th i18n:translate="label_samplepoint">Sample Point</th>
+                tal:content="context/getCCEmailsReport">x@y.com</td>
+            <th i18n:translate="label_CCNamesReport">CC Names - Report</th>
             <td class="left"  tal:attributes="colspan python:right_col"
-                tal:content="context/getSamplePoint">This sample point</td>
+                tal:content="context/getCCNamesReport">Mike</td>
         </tr>
 
         <tr>
-            <th i18n:translate="label_InvoiceContactID">Invoice Contact ID</th>
+            <th i18n:translate="label_CCEmailsInvoice">CC Emails - Invoice</th>
             <td class="left"  tal:attributes="colspan python:left_col"
-                tal:content="context/getInvoiceContactID">Mike</td>
-            <th i18n:translate="label_CCEmailInvoice">CC Email Invoice</th>
-            <td class="left"  tal:attributes="colspan python:right_col"
-                tal:content="context/getCCEmailInvoice">123</td>
+                tal:content="context/getCCEmailsInvoice">123</td>
+            <th i18n:translate="label_blank"></th>
+            <td class="left"  tal:attributes="colspan python:right_col"></td>
         </tr>
 
         <tr>
             <th i18n:translate="label_OrderID">Order</th>
             <td class="left"  tal:attributes="colspan python:left_col"
                 tal:content="context/getOrderID">123</td>
-            <th i18n:translate="label_QuoteID">Quote</th>
+            <th i18n:translate="label_ClientReference">Client Reference</th>
             <td class="left"  tal:attributes="colspan python:right_col"
                 tal:content="context/getQuoteID">123</td>
         </tr>
@@ -280,7 +272,13 @@ coming attractions
                 tal:content="date_applied" >2005-01-01 10:00</span>
             </td>
         </tr>
-
+        <tr>
+            <th i18n:translate="label_samplepoint">Sample Point</th>
+            <td class="left"  tal:attributes="colspan python:left_col"
+                tal:content="context/getSamplePoint">This sample point</td>
+            <th i18n:translate="label_blank"></th>
+            <td class="left"  tal:attributes="colspan python:left_col"></td>
+        </tr>
         </thead>
         <tbody tal:define="arimport python:context">
         <tr>
@@ -349,7 +347,7 @@ coming attractions
             tal:attributes="
                 onMouseover string:showPopup('Analyses.${repeat/aritem/number}');
                 onMouseout string:hidePopup('Analyses.${repeat/aritem/number}')">
-        <span i18n:translate="label_show">Show</span>
+        <span i18n:translate="label_Detail">Detail</span>
         </a>
         <div id=""
              class="uncertaintydiv"

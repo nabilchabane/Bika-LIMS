@@ -260,15 +260,22 @@ class ClientARImportAddView(BrowserView):
                 aritem.setRemarks(item_remarks)
                 aritem.setAnalyses(analyses)
 
+        cc_names_report = ','.join(
+                [i.strip() for i in batch_headers[6].split(';')])
+        cc_emails_report = ','.join(
+                [i.strip() for i in batch_headers[7].split(';')])
+        cc_emails_invoice = ','.join(
+                [i.strip() for i in batch_headers[8].split(';')])
+
         arimport.edit(
             ImportOption='c',
             FileName=batch_headers[2],
             ClientTitle = batch_headers[3],
             ClientID = batch_headers[4],
             ContactID = batch_headers[5],
-            CCContactID = batch_headers[6],
-            InvoiceContactID = batch_headers[7],
-            CCEmailInvoice = batch_headers[8],
+            CCNamesReport = cc_names_report,
+            CCEmailsReport = cc_emails_report,
+            CCEmailsInvoice = cc_emails_invoice,
             OrderID = batch_headers[9],
             QuoteID = batch_headers[10],
             SamplePoint = batch_headers[11],
