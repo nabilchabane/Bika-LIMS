@@ -152,6 +152,13 @@ class ClientARImportAddView(BrowserView):
                 arimport, msg = self.import_file_c(csvfile, client_id)
             elif option == 's':
                 arimport, msg = self.import_file_s(csvfile, client_id)
+            else:
+                msg = "Import Option not yet available"
+                IStatusMessage(request).addStatusMessage(_(msg), "warn")
+                request.response.redirect('%s/arimports' % (
+                    self.context.absolute_url()))
+                return 
+
             if arimport:
                 msg = "AR Import complete"
                 IStatusMessage(request).addStatusMessage(_(msg), "info")
@@ -274,6 +281,7 @@ class ClientARImportAddView(BrowserView):
         arimport.edit(
             ImportOption='c',
             FileName=batch_headers[2],
+            OriginalFile=csvfile,
             ClientTitle = batch_headers[3],
             ClientID = batch_headers[4],
             ContactID = batch_headers[5],
@@ -456,16 +464,17 @@ class ClientARImportAddView(BrowserView):
 
         return valid_batch
 
-    def import_file_s(self, csvfile, client_id, state):
-        import csv
-
+    def import_file_s(self, csvfile, client_id):
+        fullfilename = csvfile.filename
+        fullfilename = fullfilename.split('/')[-1]
+        filename = fullfilename.split('.')[0]
         log = []
         r = self.portal_catalog(portal_type='Client', id=client_id)
         if len(r) == 0:
             log.append('   Could not find Client %s' % client_id)
             return '\n'.join(log)
         client = r[0].getObject()
-        reader = csv.reader(csvfile)
+        reader = csv.reader(csvfile.readlines())
         samples = []
         sample_headers = None
         batch_headers = None
@@ -575,6 +584,7 @@ class ClientARImportAddView(BrowserView):
 
         arimport.edit(
             ImportOption='s',
+            OriginalFile=csvfile,
             ClientTitle = clientname,
             ClientID = client_id,
             ClientPhone = clientphone,

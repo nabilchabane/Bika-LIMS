@@ -32,6 +32,12 @@ schema = BikaSchema.copy() + Schema((
             label = _("Filename"),
         ),
     ),
+    FileField('OriginalFile',
+        searchable = True,
+        widget = FileWidget(
+            label = _("Original File"),
+        ),
+    ),
     StringField('ClientTitle',
         searchable = True,
         widget = StringWidget(

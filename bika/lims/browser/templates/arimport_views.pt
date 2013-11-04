@@ -19,78 +19,74 @@
         class="arimport"
         cellpadding="0" cellspacing="0">
 
-        <thead>
-
+      <thead>
         <tr>
-        <th i18n:translate="label_clientname">Client Name</th>
-        <td class="left" tal:attributes="colspan python:left_col"
-            tal:content="context/getClientTitle">This Client</td>
-        <th i18n:translate="label_phone">Phone</th>
-        <td class="left" tal:attributes="colspan python:right_col"
-            tal:content="context/ClientPhone">123</td>
+            <th i18n:translate="label_clientname">Client Name</th>
+            <td class="left" tal:attributes="colspan python:left_col"
+                tal:content="context/getClientTitle">This Client</td>
+            <th i18n:translate="label_phone">Phone</th>
+            <td class="left" tal:attributes="colspan python:right_col"
+                tal:content="context/ClientPhone">123</td>
         </tr>
         <tr>
-        <th i18n:translate="label_address">Address</th>
-        <td class="left" tal:attributes="colspan python:left_col"
-            tal:content="context/getClientAddress">This Address</td>
-        <th i18n:translate="label_fax">Fax</th>
-        <td class="left" tal:attributes="colspan python:right_col"
-            tal:content="context/ClientFax">123</td>
+            <th i18n:translate="label_address">Address</th>
+            <td class="left" tal:attributes="colspan python:left_col"
+                tal:content="context/getClientAddress">This Address</td>
+            <th i18n:translate="label_fax">Fax</th>
+            <td class="left" tal:attributes="colspan python:right_col"
+                tal:content="context/ClientFax">123</td>
         </tr>
         <tr>
-        <th i18n:translate="label_city_prov_postal">City/Prov/Postal</th>
-        <td class="left" tal:attributes="colspan python:left_col"
-            tal:content="context/getClientCity">This City</td>
-        <th i18n:translate="label_email">Email</th>
-        <td class="left" tal:attributes="colspan python:right_col"
-            tal:content="context/ClientEmail">123</td>
+            <th i18n:translate="label_city_prov_postal">City/Prov/Postal</th>
+            <td class="left" tal:attributes="colspan python:left_col"
+                tal:content="context/getClientCity">This City</td>
+            <th i18n:translate="label_email">Email</th>
+            <td class="left" tal:attributes="colspan python:right_col"
+                tal:content="context/ClientEmail">123</td>
         </tr>
-
         <tr>
-        <th i18n:translate="label_contact_person">Contact Person</th>
-        <td class="left" tal:attributes="colspan python:left_col"
-            tal:content="context/getContactName">JonesJJ</td>
-        <th i18n:translate="label_ccemail">CC Email</th>
-        <td class="left" tal:attributes="colspan python:right_col" 
-            tal:content="context/getCCEmailsReport">x@y.com</td>
+            <th i18n:translate="label_contact_person">Contact Person</th>
+            <td class="left" tal:attributes="colspan python:left_col"
+                tal:content="context/getContactName">JonesJJ</td>
+            <th i18n:translate="label_ccemail">CC Email</th>
+            <td class="left" tal:attributes="colspan python:right_col" 
+                tal:content="context/getCCEmailsReport">x@y.com</td>
         </tr>
-
         <tr>
-        <th i18n:translate="label_client_orderid">Order ID</th>
-        <td class="left"  tal:attributes="colspan python:left_col"
-            tal:content="context/getOrderID">Valid</td>
-        <th i18n:translate="label_temperature">Temperature</th>
-        <td class="left"  tal:attributes="colspan python:right_col"
-            tal:content="context/getTemperature">1</td>
+            <th i18n:translate="label_client_orderid">Order ID</th>
+            <td class="left"  tal:attributes="colspan python:left_col"
+                tal:content="context/getOrderID">Valid</td>
+            <th i18n:translate="label_temperature">Temperature</th>
+            <td class="left"  tal:attributes="colspan python:right_col"
+                tal:content="context/getTemperature">1</td>
         </tr>
-
         <tr>
-        <th i18n:translate="label_status">Status</th>
-        <td class="left"  tal:attributes="colspan python:left_col"
-            tal:define="status python:context.getStatus() and 'Valid' or 'Invalid'"
-            tal:content="status">Valid</td>
-        <th i18n:translate="label_dateimported">Date imported</th>
-        <td class="left"  tal:attributes="colspan python:right_col"
-            tal:define="date_imported context/getDateImported"
-            tal:content="python:plone_view.toLocalizedTime(date_imported, long_format=1)"
-            >2005-01-01 10:00</td>
+            <th i18n:translate="label_status">Status</th>
+            <td class="left"  tal:attributes="colspan python:left_col"
+                tal:define="status python:context.getStatus() and 'Valid' or 'Invalid'"
+                tal:content="status">Valid</td>
+            <th i18n:translate="label_dateimported">Date imported</th>
+            <td class="left"  tal:attributes="colspan python:right_col"
+                tal:define="date_imported context/getDateImported"
+                tal:content="python:plone_view.toLocalizedTime(date_imported, long_format=1)"
+                >2005-01-01 10:00</td>
         </tr>
-
         <tal:date_applied
             tal:define="date_applied context/getDateApplied">
-        <tr tal:condition="date_applied">
-        <th>
-        <span i18n:translate="label_dateapplied">Date applied</span>
-        </th>
-        <td class="left"
-            tal:attributes="colspan python:left_col">
-        <span
-            tal:content="python:plone_view.toLocalizedTime(date_applied, long_format=1)"
-            >2005-01-01 10:00</span>
-        </td>
-        <th></th>
-        <td tal:attributes="colspan python:right_col"></td>
-        </tr>
+            <tr tal:condition="date_applied">
+              <th>
+                <span i18n:translate="label_dateapplied">Date applied</span>
+                </th>
+                <td class="left"
+                    tal:attributes="colspan python:left_col">
+                <span
+                    tal:content="python:plone_view.toLocalizedTime(date_applied, long_format=1)"
+                    >2005-01-01 10:00</span>
+                </td>
+              <th>
+              </th>
+                <td tal:attributes="colspan python:right_col"></td>
+            </tr>
         </tal:date_applied>
 
         </thead>
@@ -250,8 +246,10 @@ coming attractions
 
         <tr>
             <th i18n:translate="label_filename">File name</th>
-            <td class="left" tal:attributes="colspan python:left_col" 
-                tal:content="context/getFileName">file.csv</td>
+            <td class="left" tal:attributes="colspan python:left_col">
+                <span tal:content="context/getFileName | nothing">AR-001</span>
+                <a tal:attributes="href string:${context/absolute_url}/at_download/OriginalFile" > Download ...</a>
+            </td>
             <th i18n:translate="label_status">Status</th>
             <td class="left"  tal:attributes="colspan python:right_col"
                 tal:define="status python:context.getStatus() and 'Valid' or 'Invalid'"
@@ -279,8 +277,8 @@ coming attractions
             <th i18n:translate="label_blank"></th>
             <td class="left"  tal:attributes="colspan python:left_col"></td>
         </tr>
-        </thead>
-        <tbody tal:define="arimport python:context">
+      </thead>
+      <tbody tal:define="arimport python:context">
         <tr>
         <th class="center" i18n:translate="label_samplename">Sample</th>
         <tal:submitted
@@ -366,7 +364,7 @@ coming attractions
         </td>
         </tr>
         </tal:items>
-        </tbody>
+      </tbody>
     </table>
 
     <div tal:define="remarks context/getRemarks"
