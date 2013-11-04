@@ -928,12 +928,14 @@ table.arimport .drybody {
     background-color: #dae0f0;
 }
 div.uncertaintydiv {
+    z-index: 100;
     position: absolute;
+    margin-bottom: 0.1em;
 }
 table.uncertaintytable {
     background: none repeat scroll 0 0 #D3D3AD;
     border: 3px solid #636321;
-    margin: 1em 0;
+    margin: 0 0;
     text-align: center !important;
 }
 .emphatic {
