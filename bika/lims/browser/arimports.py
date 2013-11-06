@@ -337,12 +337,15 @@ class ClientARImportAddView(BrowserView):
 
         for row in reader:
             row_count = row_count + 1
-            if not row: continue
+            if not row:
+                continue
 
             if last_rows:
                 continue
             if in_footers:
                 continue
+                #TODO MJM - this can never happen
+                import pdb; pdb.set_trace()
                 if temp_row:
                     temperature = row[8]
                     temp_row = False

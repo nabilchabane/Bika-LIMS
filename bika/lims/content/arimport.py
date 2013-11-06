@@ -656,7 +656,7 @@ class ARImport(BaseFolder):
         uid = self.UID()
         batches = pc({
                     'portal_type': 'ARImport', 
-                    'path': {'query': '/'.join(self.getPhysicalPath())},
+                    'path': {'query': '/'.join(client.getPhysicalPath())},
                     })
         for brain in batches:
             if brain.UID == uid:
