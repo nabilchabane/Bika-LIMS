@@ -81,15 +81,24 @@ schema = BikaSchema.copy() + Schema((
     LinesField('Remarks',
         widget = LinesWidget(
             label = _("Remarks"),
+            visible = {'edit':'hidden'},
         )
     ),
     ReferenceField('AnalysisRequest',
         allowed_types = ('AnalysisRequest',),
         relationship = 'ARImportItemAnalysisRequest',
+        widget = ReferenceWidget(
+            label = _("AnalysisProfile Request"),
+            visible = {'edit':'hidden'},
+        ),
     ),
     ReferenceField('Sample',
         allowed_types = ('Sample',),
         relationship = 'ARImportItemSample',
+        widget = ReferenceWidget(
+            label = _("Sample"),
+            visible = {'edit':'hidden'},
+        ),
     ),
 ),
 )
