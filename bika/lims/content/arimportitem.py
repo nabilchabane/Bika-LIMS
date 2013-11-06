@@ -1,3 +1,7 @@
+from bika.lims import bikaMessageFactory as _
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.config import PROJECTNAME
+from bika.lims.interfaces import IARImportItem
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
 from AccessControl import ClassSecurityInfo
@@ -6,9 +10,7 @@ from Products.CMFCore.permissions import View, \
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.config import PROJECTNAME
-from bika.lims import bikaMessageFactory as _
+from zope.interface import implements
 
 schema = BikaSchema.copy() + Schema((
     StringField('SampleName',
@@ -94,6 +96,7 @@ schema = BikaSchema.copy() + Schema((
 
 class ARImportItem(BaseContent):
     security = ClassSecurityInfo()
+    implements (IARImportItem)
     schema = schema
     displayContentsTab = False
 

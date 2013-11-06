@@ -9,6 +9,7 @@
       for="bika.lims.interfaces.IARImport"
       name="arimport_view"
       class="bika.lims.browser.arimports.ARImportView"
+      template="templates/arimport_view.pt"
       permission="bika.lims.ManageARImport"
       layer="bika.lims.interfaces.IBikaLIMS"
     />
@@ -33,6 +34,24 @@
       for="bika.lims.interfaces.IClient"
       name="arimports"
       class="bika.lims.browser.arimports.ClientARImportsView"
+      permission="bika.lims.ManageARImport"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IARImport"
+      name="validate_arimport"
+      class="bika.lims.browser.arimports.ARImportView"
+      attribute="validate_arimport"
+      permission="bika.lims.ManageARImport"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IARImportItem"
+      name="isSubmitted"
+      class="bika.lims.browser.arimports.ARImportView"
+      attribute="isSubmitted"
       permission="bika.lims.ManageARImport"
       layer="bika.lims.interfaces.IBikaLIMS"
     />

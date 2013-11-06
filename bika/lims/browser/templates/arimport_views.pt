@@ -92,64 +92,65 @@
         </thead>
         <tbody tal:define="arimport python:context">
         <tr>
-        <tal:submitted
-            tal:condition="python:review_state == 'submitted'">
-        <th class="center" i18n:translate="label_requestid">Request ID</th>
-        </tal:submitted>
-        <th class="center" i18n:translate="label_clientreference">Client Reference</th>
-        <th class="center" i18n:translate="label_remarks">Remarks</th>
-        <th class="center" i18n:translate="label_clientsid">Sample ID</th>
-        <th class="center" i18n:translate="label_datesampled">Date Sampled</th>
-        <th class="center" i18n:translate="label_sampletype">Sample type</th>
-        <th class="center" i18n:translate="label_no_containers"># of Containers</th>
-        <th class="center" i18n:translate="label_profile">Profile</th>
-        <th class="center" i18n:translate="label_profile">Profile</th>
-        <th class="center" i18n:translate="label_analysis">Analysis</th>
-        <th class="center" i18n:translate="label_analysis">Analysis</th>
-        <th class="center" i18n:translate="label_analysis">Analysis</th>
-        <th class="center" i18n:translate="label_valid">Valid</th>
+            <tal:submitted
+                tal:condition="python:review_state == 'submitted'">
+                <th class="center" i18n:translate="label_requestid">Request ID</th>
+            </tal:submitted>
+            <th class="center" i18n:translate="label_clientreference">Client Reference</th>
+            <th class="center" i18n:translate="label_remarks">Remarks</th>
+            <th class="center" i18n:translate="label_clientsid">Sample ID</th>
+            <th class="center" i18n:translate="label_datesampled">Date Sampled</th>
+            <th class="center" i18n:translate="label_sampletype">Sample type</th>
+            <th class="center" i18n:translate="label_no_containers"># of Containers</th>
+            <th class="center" i18n:translate="label_profile">Profile</th>
+            <th class="center" i18n:translate="label_profile">Profile</th>
+            <th class="center" i18n:translate="label_analysis">Analysis</th>
+            <th class="center" i18n:translate="label_analysis">Analysis</th>
+            <th class="center" i18n:translate="label_analysis">Analysis</th>
+            <th class="center" i18n:translate="label_valid">Valid</th>
         </tr>
         <tal:items
             tal:define="aritems python:arimport.objectValues('ARImportItem')"
             tal:repeat="aritem aritems">
-        <tr>
-        <tal:submitted
-            tal:define="ar aritem/getAnalysisRequest;
-                        sample aritem/getSample| nothing"
-            tal:condition="python:review_state == 'submitted'">
-        <td class="left">
-        <a tal:attributes="href ar/absolute_url | nothing"
-           tal:content="ar/Title | nothing">AR-001</a>
-        <a href="" 
-            tal:attributes="href sample/absolute_url">
-        <img src="" 
-            alt="Sample"
-            tal:attributes="src string:${portal/absolute_url}/sample_small.png">
-        </a>
-        </td>
-        </tal:submitted>
-        <td tal:content="aritem/getClientRef">R1</td>
-        <td tal:content="aritem/getClientRemarks">xxx</td>
-        <td tal:content="aritem/getClientSid">S1</td>
-        <td tal:content="aritem/getSampleDate">xxx</td>
-        <td tal:content="aritem/getSampleType">xxx</td>
-        <td tal:content="aritem/getNoContainers">1</td>
-        <tal:profiles 
-            tal:define="profiles aritem/getAnalysisProfile">
-        <td tal:content="python:len(profiles) > 0 and profiles[0] or None">xxx</td>
-        <td tal:content="python:len(profiles) > 1 and profiles[1] or None">xxx</td>
-        </tal:profiles>
-        <tal:analyses 
-            tal:define="analyses aritem/getAnalyses">
-        <td tal:content="python:len(analyses) > 0 and analyses[0] or None">xxx</td>
-        <td tal:content="python:len(analyses) > 1 and analyses[1] or None">xxx</td>
-        <td tal:content="python:len(analyses) > 2 and analyses[2] or None">xxx</td>
-        </tal:analyses>
-        <td class="left"
-            tal:define="valid python:aritem.getRemarks() and 'No' or 'Yes'">
-        <span tal:content="valid">xxx</span>
-        </td>
-        </tr>
+          <tr>
+            <tal:submitted
+                tal:define="ar aritem/getAnalysisRequest;
+                            sample aritem/getSample| nothing"
+                tal:condition="python:review_state == 'submitted'">
+            <td class="left">
+            <a tal:attributes="href ar/absolute_url | nothing"
+               tal:content="ar/Title | nothing">AR-001</a>
+            <a href="" 
+                tal:attributes="href sample/absolute_url">
+            <img src="" 
+                alt="Sample"
+                tal:attributes="src string:${portal/absolute_url}/sample_small.png">
+            </a>
+            </td>
+            </tal:submitted>
+            <td tal:content="aritem/getClientRef">R1</td>
+            <td tal:content="aritem/getClientRemarks">xxx</td>
+            <td tal:content="aritem/getClientSid">S1</td>
+            <td tal:content="aritem/getSampleDate">xxx</td>
+            <td tal:content="aritem/getSampleType">xxx</td>
+            <td tal:content="aritem/getNoContainers">1</td>
+            <tal:profiles 
+                tal:define="profiles aritem/getAnalysisProfile">
+            <td tal:content="python:len(profiles) > 0 and profiles[0] or None">xxx</td>
+            <td tal:content="python:len(profiles) > 1 and profiles[1] or None">xxx</td>
+            </tal:profiles>
+            <tal:analyses 
+                tal:define="analyses aritem/getAnalyses">
+            <td tal:content="python:len(analyses) > 0 and analyses[0] or None">xxx</td>
+            <td tal:content="python:len(analyses) > 1 and analyses[1] or None">xxx</td>
+            <td tal:content="python:len(analyses) > 2 and analyses[2] or None">xxx</td>
+            </tal:analyses>
+            <td class="left"
+                tal:define="valid python:aritem.getRemarks()">
+                <span tal:condition="valid">Yes</span>
+                <span tal:condition="not: valid" style="color:red;">No</span>
+            </td>
+          </tr>
         </tal:items>
         </tbody>
     </table>
@@ -252,8 +253,11 @@ coming attractions
             </td>
             <th i18n:translate="label_status">Status</th>
             <td class="left"  tal:attributes="colspan python:right_col"
-                tal:define="status python:context.getStatus() and 'Valid' or 'Invalid'"
-                tal:content="status">Valid</td>
+                tal:define="status python:context.getStatus() and 'Valid' or 'Invalid'">
+                <span tal:content="status">Valid</span>
+                <a tal:condition="python:review_state != 'submitted'"
+                   tal:attributes="href string:${context/absolute_url}/validate_arimport" > Validate ...</a>
+            </td>
         </tr>
 
         <tr tal:define="date_applied view/getDateApplied">
@@ -280,89 +284,90 @@ coming attractions
       </thead>
       <tbody tal:define="arimport python:context">
         <tr>
-        <th class="center" i18n:translate="label_samplename">Sample</th>
-        <tal:submitted
-            tal:condition="python:review_state == 'submitted'">
-            <th class="center" i18n:translate="label_requestid">Request ID</th>
-        </tal:submitted>
-        <th class="center" i18n:translate="label_clientref">Client Ref</th>
-        <th class="center" i18n:translate="label_clientsid">Client Sid</th>
-        <th class="center" i18n:translate="label_sampledate">Sample Date</th>
-        <th class="center" i18n:translate="label_sampletype">Sample type</th>
-        <th class="center" i18n:translate="label_pickingslip">Picking slip</th>
-        <th class="center" i18n:translate="label_containertype">Container Type</th>
-        <th class="center" i18n:translate="label_report_dry_matter">Report as DM</th>
-        <th class="center" i18n:translate="label_priority">Priority</th>
-        <th class="center" i18n:translate="label_orderid">Order ID</th>
-        <th class="center" i18n:translate="label_analyses">Analyses</th>
-        <th class="center" i18n:translate="label_valid">Valid</th>
+            <th class="center" i18n:translate="label_samplename">Sample</th>
+            <tal:submitted
+                tal:condition="python:review_state == 'submitted'">
+                <th class="center" i18n:translate="label_requestid">Request ID</th>
+            </tal:submitted>
+            <th class="center" i18n:translate="label_clientref">Client Ref</th>
+            <th class="center" i18n:translate="label_clientsid">Client Sid</th>
+            <th class="center" i18n:translate="label_sampledate">Sample Date</th>
+            <th class="center" i18n:translate="label_sampletype">Sample type</th>
+            <th class="center" i18n:translate="label_pickingslip">Picking slip</th>
+            <th class="center" i18n:translate="label_containertype">Container Type</th>
+            <th class="center" i18n:translate="label_report_dry_matter">Report as DM</th>
+            <th class="center" i18n:translate="label_priority">Priority</th>
+            <th class="center" i18n:translate="label_orderid">Order ID</th>
+            <th class="center" i18n:translate="label_analyses">Analyses</th>
+            <th class="center" i18n:translate="label_valid">Valid</th>
         </tr>
         <tal:items
             tal:define="aritems python:arimport.objectValues('ARImportItem')"
             tal:repeat="aritem aritems">
-        <tr>
-        <td class="left"
-            tal:condition="python:review_state == 'submitted'">
-                <a tal:attributes="href aritem/absolute_url | nothing"
-                   tal:content="aritem/getSampleName | nothing">AR-001</a>
-        </td>
-        <td class="left"
-            tal:condition="python:review_state != 'submitted'">
-                <a tal:attributes="href aritem/absolute_url | nothing"
-                   tal:content="aritem/Title | nothing">AR-001</a>
-        </td>
-        <tal:submitted
-            tal:define="ar aritem/getAnalysisRequest;
-                        sample aritem/getSample| nothing"
-            tal:condition="python:review_state == 'submitted'">
+          <tr>
             <td class="left"
-                tal:condition="python:not ar"
-                tal:content="aritem/getSampleName">Sample 1</td>
-            <td class="left"
-                tal:condition="python:ar">
-                <a tal:attributes="href ar/absolute_url | nothing"
-                   tal:content="ar/Title | nothing">AR-001</a>
-                <a href="" 
-                    tal:attributes="href sample/absolute_url">
-                    <img src="" 
-                        alt="Sample"
-                        tal:attributes="src string:${view/portal_url}/++resource++bika.lims.images/sample_small.png">
-                </a>
+                tal:condition="python:review_state == 'submitted'">
+                    <a tal:attributes="href string:${aritem/absolute_url}/base_view"
+                       tal:content="aritem/getSampleName | nothing">AR-001</a>
             </td>
-        </tal:submitted>
-        <td tal:content="aritem/getClientRef">R1</td>
-        <td tal:content="aritem/getClientSid">S1</td>
-        <td tal:content="aritem/getSampleDate">Sampledate</td>
-        <td tal:content="aritem/getSampleType">SampleType</td>
-        <td tal:content="aritem/getPickingSlip">PickingSlip</td>
-        <td tal:content="aritem/getContainerType">PickingSlip</td>
-        <td tal:content="aritem/getReportDryMatter">ReportDM</td>
-        <td tal:content="aritem/getPriority">ReportDM</td>
-        <td tal:content="aritem/getOrderID">OrderID</td>
-        <td>
-        <a  onMouseover=""
-            onMouseout=""
-            tal:attributes="
-                onMouseover string:showPopup('Analyses.${repeat/aritem/number}');
-                onMouseout string:hidePopup('Analyses.${repeat/aritem/number}')">
-        <span i18n:translate="label_Detail">Detail</span>
-        </a>
-        <div id=""
-             class="uncertaintydiv"
-             style="visibility:hidden"
-             tal:attributes="id string:Analyses.${repeat/aritem/number}" >
-            <table class="uncertaintytable">
-                <tr tal:repeat="analysis aritem/getAnalyses">
-                <td tal:content="analysis"/>
-            </tr>
-            </table>
-        </div>
-        </td>
-        <td class="left"
-            tal:define="valid python:aritem.getRemarks() and 'No' or 'Yes'">
-        <span tal:content="valid">xxx</span>
-        </td>
-        </tr>
+            <td class="left"
+                tal:condition="python:review_state != 'submitted'">
+                    <a tal:attributes="href string:${aritem/absolute_url}/edit"
+                       tal:content="aritem/Title | nothing">AR-001</a>
+            </td>
+            <tal:submitted
+                tal:define="ar aritem/getAnalysisRequest;
+                            sample aritem/getSample| nothing"
+                tal:condition="python:review_state == 'submitted'">
+                <td class="left"
+                    tal:condition="python:not ar"
+                    tal:content="aritem/getSampleName">Sample 1</td>
+                <td class="left"
+                    tal:condition="python:ar">
+                    <a tal:attributes="href ar/absolute_url | nothing"
+                       tal:content="ar/Title | nothing">AR-001</a>
+                    <a href="" 
+                        tal:attributes="href sample/absolute_url">
+                        <img src="" 
+                            alt="Sample"
+                            tal:attributes="src string:${view/portal_url}/++resource++bika.lims.images/sample_small.png">
+                    </a>
+                </td>
+            </tal:submitted>
+            <td tal:content="aritem/getClientRef">R1</td>
+            <td tal:content="aritem/getClientSid">S1</td>
+            <td tal:content="aritem/getSampleDate">Sampledate</td>
+            <td tal:content="aritem/getSampleType">SampleType</td>
+            <td tal:content="aritem/getPickingSlip">PickingSlip</td>
+            <td tal:content="aritem/getContainerType">PickingSlip</td>
+            <td tal:content="aritem/getReportDryMatter">ReportDM</td>
+            <td tal:content="aritem/getPriority">ReportDM</td>
+            <td tal:content="aritem/getOrderID">OrderID</td>
+            <td>
+            <a  onMouseover=""
+                onMouseout=""
+                tal:attributes="
+                    onMouseover string:showPopup('Analyses.${repeat/aritem/number}');
+                    onMouseout string:hidePopup('Analyses.${repeat/aritem/number}')">
+            <span i18n:translate="label_Detail">Detail</span>
+            </a>
+            <div id=""
+                 class="uncertaintydiv"
+                 style="visibility:hidden"
+                 tal:attributes="id string:Analyses.${repeat/aritem/number}" >
+                <table class="uncertaintytable">
+                    <tr tal:repeat="analysis aritem/getAnalyses">
+                    <td tal:content="analysis"/>
+                </tr>
+                </table>
+            </div>
+            </td>
+            <td class="left"
+                tal:define="valid python:len(aritem.getRemarks()) == 0 ">
+                <span tal:condition="valid">Yes</span>
+                <span tal:condition="not: valid" style="color:red;">No</span>
+            </td>
+          </tr>
         </tal:items>
       </tbody>
     </table>

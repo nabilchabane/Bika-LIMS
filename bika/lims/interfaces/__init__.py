@@ -439,3 +439,7 @@ class IARImport(Interface):
 
     "Marker interface for an ARImport"
 
+class IARImportItem(Interface):
+
+    "Marker interface for an ARImport"
+
