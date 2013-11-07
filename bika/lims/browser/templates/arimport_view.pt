@@ -19,18 +19,9 @@
 <div metal:fill-slot="main">
 
 
-    <div tal:condition="python:view.getImportOption() not in ['s', 'p']">
-        <metal:block use-macro="context/arimport_views/macros/arimport_view_c"/>
+    <div tal:condition="python:view.getImportOption() in ('c', 'p')">
+        <metal:block use-macro="context/arimport_views/macros/arimport_view"/>
     </div>
-<!--
-    <div tal:condition="python:view.getImportOption() == 's'">
-        <metal:block use-macro="here/arimport_views/macros/arimport_view_s"/>
-    </div>
-
-    <div tal:condition="python:view.getImportOption() == 'p'">
-        <metal:block use-macro="here/arimport_views/macros/arimport_view_p"/>
-    </div>
--->
 
 </div>
 

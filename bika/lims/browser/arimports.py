@@ -1,6 +1,7 @@
 import csv
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import transaction_note
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from bika.lims import PMF, logger, bikaMessageFactory as _
@@ -34,10 +35,11 @@ class ARImportView(BrowserView):
             return plone_view.toLocalizedTime(dt, long_format=1)
 
     def validate_arimport(self):
+        """ validate the current ARImport object """
         request = self.request
         arimport = self.context
-        if arimport.getImportOption() == 'c':
-            valid = arimport.validate_classic()
+        if arimport.getImportOption() in ('c', 'p'):
+            valid = arimport.validateIt()
             if not valid:
                 msg = 'AR Import invalid'
                 IStatusMessage(request).addStatusMessage(_(msg), "error")
@@ -160,10 +162,8 @@ class ClientARImportAddView(BrowserView):
             option = form.get('ImportOption')
             client_id = form.get('ClientID')
             valid = False
-            if option == 'c':
-                arimport, msg = self.import_file_c(csvfile, client_id)
-            elif option == 's':
-                arimport, msg = self.import_file_s(csvfile, client_id)
+            if option in ('c', 'p'):
+                arimport, msg = self._import_file(option, csvfile, client_id)
             else:
                 msg = "Import Option not yet available"
                 IStatusMessage(request).addStatusMessage(_(msg), "warn")
@@ -176,10 +176,14 @@ class ClientARImportAddView(BrowserView):
                 IStatusMessage(request).addStatusMessage(_(msg), "info")
                 request.response.redirect(arimport.absolute_url())
                 return 
-            return False
+            else:
+                IStatusMessage(request).addStatusMessage(_(msg), "error")
+                request.response.redirect('%s/arimport_add' % (
+                    self.context.absolute_url()))
+                return 
         return self.template()
 
-    def import_file_c(self, csvfile, client_id):
+    def _import_file(self, importoption, csvfile, client_id):
         fullfilename = csvfile.filename
         fullfilename = fullfilename.split('/')[-1]
         filename = fullfilename.split('.')[0]
@@ -217,7 +221,7 @@ class ClientARImportAddView(BrowserView):
                     transaction_note(msg)
                     return None, msg
                 entered_name = fullfilename.split('.')[0]
-                if entered_name.lower() != filename.lower():
+                if not row[2] or entered_name.lower() != row[2].lower():
                     msg = 'Filename, %s, does not match entered filename, %s' \
                             % (filename, row[2])
                     transaction_note(msg)
@@ -277,7 +281,10 @@ class ClientARImportAddView(BrowserView):
                     )
             
                 aritem.setRemarks(item_remarks)
-                aritem.setAnalyses(analyses)
+                if importoption == 'c':
+                    aritem.setAnalyses(analyses)
+                elif importoption == 'p':
+                    aritem.setAnalysisProfile(analyses)
 
         cc_names_report = ','.join(
                 [i.strip() for i in batch_headers[6].split(';')])
@@ -291,7 +298,7 @@ class ClientARImportAddView(BrowserView):
         except:
             numOfSamples = 0
         arimport.edit(
-            ImportOption='c',
+            ImportOption=importoption,
             FileName=batch_headers[2],
             OriginalFile=csvfile,
             ClientTitle = batch_headers[3],
@@ -309,150 +316,7 @@ class ClientARImportAddView(BrowserView):
             DateImported=DateTime(),
             )
 
-        valid = arimport.validate_classic()
+        valid = arimport.validateIt()
         #request.response.write('<script>document.location.href="%s/client_arimports?portal_status_message=%s%%20imported"</script>' % (client.absolute_url(), arimport_id))
         return arimport, msg
-
-    def import_file_s(self, csvfile, client_id):
-        fullfilename = csvfile.filename
-        fullfilename = fullfilename.split('/')[-1]
-        filename = fullfilename.split('.')[0]
-        log = []
-        r = self.portal_catalog(portal_type='Client', id=client_id)
-        if len(r) == 0:
-            log.append('   Could not find Client %s' % client_id)
-            return '\n'.join(log)
-        client = r[0].getObject()
-        reader = csv.reader(csvfile.readlines())
-        samples = []
-        sample_headers = None
-        batch_headers = None
-        row_count = 0
-        sample_count = 0
-        batch_remarks = []
-        in_footers = False
-        last_rows = False
-        temp_row = False
-        temperature = ''
-
-        for row in reader:
-            row_count = row_count + 1
-            if not row:
-                continue
-
-            if last_rows:
-                continue
-            if in_footers:
-                continue
-                #TODO MJM - this can never happen
-                import pdb; pdb.set_trace()
-                if temp_row:
-                    temperature = row[8]
-                    temp_row = False
-                    last_rows = True
-                if row[8] == 'Temperature on Arrival:':
-                    temp_row = True
-                    continue
-                
-
-            if row_count > 11:
-                if row[0] == '':
-                    in_footers = True
-
-            if row_count == 5:
-                client_orderid = row[10]
-                continue
-
-            if row_count < 7:
-                continue
-
-            if row_count == 7:
-                if row[0] != 'Client Name':
-                    log.append('  Invalid file')
-                    return '\n'.join(log)
-                batch_headers = row[0:]
-                arimport_id = tmpID()
-                client.invokeFactory(id=arimport_id, type_name='ARImport')
-                arimport = client._getOb(arimport_id)
-                clientname = row[1]
-                clientphone = row[5]
-                continue
-
-            if row_count == 8:
-                clientaddress = row[1]
-                clientfax = row[5]
-                continue
-            if row_count == 9:
-                clientcity = row[1]
-                clientemail = row[5]
-                continue
-            if row_count == 10:
-                contact = row[1]
-                ccemail = row[5]
-                continue
-            if row_count == 11:
-                continue
-
-
-            if not in_footers:
-                samples.append(row)
-        
-        pad = 8192*' '
-        #request = self.request
-        #request.response.write(self.progress_bar(request=request))
-        #request.response.write('<input style="display: none;" id="progressType" value="Analysis request import">')
-        #request.response.write('<input style="display: none;" id="progressDone" value="Validating...">')
-        #request.response.write(pad+'<input style="display: none;" id="inputTotal" value="%s">' % len(samples))
-
-        row_count = 0
-        for sample in samples:
-            row_count = row_count + 1
-            #request.response.write(pad+'<input style="display: none;" name="inputProgress" value="%s">' % row_count)
-
-            profiles = []
-            for profile in sample[6:8]:
-                if profile != None:
-                    profiles.append(profile.strip())
-
-            analyses = []
-            for analysis in sample[8:11]:
-                if analysis != None:
-                    analyses.append(analysis.strip())
-
-            aritem_id = tmpID()
-            arimport.invokeFactory(id=tmpID(), type_name='ARImportItem')
-            aritem = arimport._getOb(aritem_id)
-            aritem.edit(
-                ClientRef=sample[0],
-                ClientRemarks=sample[1],
-                ClientSid=sample[2],
-                SampleDate=sample[3],
-                SampleType = sample[4],
-                NoContainers = sample[5],
-                AnalysisProfile = profiles,
-                Analyses = analyses,
-                )
-            
-
-        arimport.edit(
-            ImportOption='s',
-            OriginalFile=csvfile,
-            ClientTitle = clientname,
-            ClientID = client_id,
-            ClientPhone = clientphone,
-            ClientFax = clientfax,
-            ClientAddress = clientaddress,
-            ClientCity = clientcity,
-            ClientEmail = clientemail,
-            ContactName = contact,
-            CCEmails = ccemail,
-            Remarks = batch_remarks, 
-            OrderID=client_orderid,
-            Temperature=temperature,
-            DateImported=DateTime(),
-            )
-
-        valid = self.validate_arimport_s(arimport)
-        #request.response.write('<script>document.location.href="%s/client_arimports?portal_status_message=%s%%20imported"</script>' % (client.absolute_url(), arimport_id))
-
 

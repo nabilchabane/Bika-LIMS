@@ -63,7 +63,7 @@ ATTACHMENT_OPTIONS = DisplayList((
 ARIMPORT_OPTIONS = DisplayList((
     ('c', _('Classic')),
     ('p', _('Profiles')),
-    ('s', _('Special')),
+#    ('s', _('Special')),
 ))
 EMAIL_SUBJECT_OPTIONS = DisplayList((
     ('ar', _('Analysis Request ID')),

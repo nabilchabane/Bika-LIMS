@@ -647,7 +647,7 @@ class ARImport(BaseFolder):
             return r[0].UID
 
 
-    def validate_classic(self):
+    def validateIt(self):
         rc = getToolByName(self, 'reference_catalog')
         pc = getToolByName(self, 'portal_catalog')
         client = self.aq_parent
@@ -754,56 +754,55 @@ class ARImport(BaseFolder):
                 batch_remarks.append('\n' + '%s: Sample date %s invalid' %(aritem.getSampleName(), aritem.getSampleDate()))
                 item_remarks.append('\n' + 'Sample date %s invalid' %(aritem.getSampleDate()))
 
-            analyses = aritem.getAnalyses()
-            for analysis in analyses:
-                if analysis not in service_keys:
-                    batch_remarks.append('\n' + '%s: Analysis %s invalid' %(aritem.getSampleName(), analysis))
-                    item_remarks.append('\n' + 'Analysis %s invalid' %(analysis))
-                    valid_item = False
-                # validate analysis dependancies
-                reqd_analyses = []
-                if dependant_services.has_key(analysis):
-                    reqd_analyses = \
-                        [s.getKeyword() for s in dependant_services[analysis]]
-                reqd_titles = ''
-                for reqd in reqd_analyses:
-                    if (reqd not in analyses):
-                        if reqd_titles != '':
-                            reqd_titles += ', '
-                        reqd_titles += reqd
-                if reqd_titles != '':
-                    valid_item = False
-                    batch_remarks.append('\n' + '%s: %s needs %s' \
-                        %(aritem.getSampleName(), analysis, reqd_titles))
-                    item_remarks.append('\n' + '%s needs %s' \
-                        %(analysis, reqd_titles))
+            if self.getImportOption() == 'c':
+                analyses = aritem.getAnalyses()
+                for analysis in analyses:
+                    if analysis not in service_keys:
+                        batch_remarks.append('\n' + '%s: Analysis %s invalid' %(aritem.getSampleName(), analysis))
+                        item_remarks.append('\n' + 'Analysis %s invalid' %(analysis))
+                        valid_item = False
+                    # validate analysis dependancies
+                    reqd_analyses = []
+                    if dependant_services.has_key(analysis):
+                        reqd_analyses = \
+                            [s.getKeyword() for s in dependant_services[analysis]]
+                    reqd_titles = ''
+                    for reqd in reqd_analyses:
+                        if (reqd not in analyses):
+                            if reqd_titles != '':
+                                reqd_titles += ', '
+                            reqd_titles += reqd
+                    if reqd_titles != '':
+                        valid_item = False
+                        batch_remarks.append('\n' + '%s: %s needs %s' \
+                            %(aritem.getSampleName(), analysis, reqd_titles))
+                        item_remarks.append('\n' + '%s needs %s' \
+                            %(analysis, reqd_titles))
 
-            # validate analysisrequest dependancies
-            if aritem.getReportDryMatter().lower() == 'y':
-                required = self.get_analysisrequest_dependancies('DryMatter')
-                reqd_analyses = required['keys']
-                reqd_titles = ''
-                for reqd in reqd_analyses:
-                    if reqd not in analyses:
-                        if reqd_titles != '':
-                            reqd_titles += ', '
-                        reqd_titles += reqd
+                # validate analysisrequest dependancies
+                if aritem.getReportDryMatter().lower() == 'y':
+                    required = self.get_analysisrequest_dependancies('DryMatter')
+                    reqd_analyses = required['keys']
+                    reqd_titles = ''
+                    for reqd in reqd_analyses:
+                        if reqd not in analyses:
+                            if reqd_titles != '':
+                                reqd_titles += ', '
+                            reqd_titles += reqd
 
-                if reqd_titles != '':
-                    valid_item = False
-                    batch_remarks.append('\n' + '%s: Report as Dry Matter needs %s' \
-                        %(aritem.getSampleName(), reqd_titles))
-                    item_remarks.append('\n' + 'Report as Dry Matter needs %s' \
-                        %(reqd_titles))
+                    if reqd_titles != '':
+                        valid_item = False
+                        batch_remarks.append('\n' + '%s: Report as Dry Matter needs %s' \
+                            %(aritem.getSampleName(), reqd_titles))
+                        item_remarks.append('\n' + 'Report as Dry Matter needs %s' \
+                            %(reqd_titles))
 
-            aritem.edit(
-                Remarks=item_remarks)
+            aritem.setRemarks(item_remarks)
             if not valid_item:
                 valid_batch = False
         if self.getNumberSamples() != len(aritems):
             valid_batch = False
-            batch_remarks.append('\nNumber of samples specified (%s) does no match number listed (%s)' % (
-                        self.getNumberSamples(), len(aritems)))
+            batch_remarks.append('\nNumber of samples specified (%s) does no match number listed (%s)' % (self.getNumberSamples(), len(aritems)))
         self.edit(
             Remarks=batch_remarks,
             Status=valid_batch)
