@@ -196,7 +196,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField('DefaultARSpecs',
         schemata = "Analyses",
-        default = 'p',
+        default = 'ar_specs',
         vocabulary = DEFAULT_AR_SPECS,
         widget = SelectionWidget(
             label = _("Default AR Specifications"),

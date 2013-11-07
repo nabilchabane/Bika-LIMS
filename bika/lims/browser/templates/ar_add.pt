@@ -44,6 +44,11 @@
 <span tal:replace="structure context/@@authenticator/authenticator"/>
 <input type="hidden" name="came_from" tal:attributes="value view/came_from" />
 
+<span id="bika_setup" style="display:none;"
+    tal:define="bs python: context.bika_setup;"
+    tal:attributes="EnableARSpecs python: 'true' if bs.getEnableARSpecs() else '';">
+</span>
+
 <!-- member discount percentage if applicable -->
 <input type="hidden" id="member_discount" name="member_discount"
     tal:attributes="value here/bika_setup/getMemberDiscount"

@@ -4,6 +4,7 @@
 function toggle_spec_fields(element) {
 	// when a service checkbox is clicked, this is used to display
 	// or remove the specification inputs.
+	if(!$("#bika_setup").attr("EnableARSpecs")) { return; }
 	var column = $(element).attr("column");
 	var root_name = $(element).attr("name");
 	var min_name   = root_name.replace("Analyses", "min");
@@ -53,6 +54,7 @@ function toggle_spec_fields(element) {
 
 function reset_spec_field_values(column) {
 	// When a spec is selected, all existing spec fields are cleared and reset
+	if(!$("#bika_setup").attr("EnableARSpecs")) { return; }
 	var spec_uid = $("#ar_"+column+"_Specification_uid").val();
 	if(spec_uid !== ""){
 		var request_data = {
@@ -87,7 +89,6 @@ function reset_spec_field_values(column) {
 }
 
 function validate_spec_field_entry(element) {
-	debugger;
 	var sb_col = $(element).attr("name").split(".")[1];
 	var uid = $(element).attr("uid");
 	$("[name^='ar\\."+sb_col+"\\.Specification']").val("");
