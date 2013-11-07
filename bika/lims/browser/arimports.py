@@ -239,7 +239,7 @@ class ClientARImportAddView(BrowserView):
                 arimport = client._getOb(arimport_id)
                 continue
             elif row_count == 3:
-                sample_headers = row[9:]
+                sample_headers = row[10:]
                 continue
             elif row_count in [4,5,6]:
                 continue
@@ -261,10 +261,10 @@ class ClientARImportAddView(BrowserView):
             #request.response.write(pad+'<input style="display: none;" name="inputProgress" value="%s">' % row_count)
             item_remarks = []
             analyses = []
-            for i in range(9, len(sample)):
+            for i in range(10, len(sample)):
                 if sample[i] != '1':
                     continue
-                analyses.append(sample_headers[(i-9)])
+                analyses.append(sample_headers[(i-10)])
             if len(analyses) > 0:
                 aritem_id = '%s_%s' %('aritem', (str(next_num)))
                 arimport.invokeFactory(id=aritem_id, type_name='ARImportItem')
