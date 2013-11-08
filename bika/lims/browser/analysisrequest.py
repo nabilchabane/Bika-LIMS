@@ -150,8 +150,20 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
                 self.request.response.redirect(self.destination_url)
                 return
 
-            prices = form.get('Price', [None])[0]
-            new = ar.setAnalyses(objects.keys(), prices = prices)
+            Analyses = objects.keys()
+            prices = form.get("Price", [None])[0]
+            specs = {}
+            if form.get("min", None):
+                for service_uid in Analyses:
+                    specs[service_uid] = {
+                        "min": form["min"][0][service_uid],
+                        "max": form["max"][0][service_uid],
+                        "error": form["error"][0][service_uid]
+                    }
+            else:
+                for service_uid in Analyses:
+                    specs[service_uid] = {"min": "", "max": "", "error": ""}
+            new = ar.setAnalyses(Analyses, prices=prices, specs=specs)
 
             # link analyses and partitions
             # If Bika Setup > Analyses > 'Display individual sample
@@ -1113,11 +1125,23 @@ class AnalysisRequestAnalysesView(BikaListingView):
                       'sortable': False,},
             'Partition': {'title': _('Partition'),
                           'sortable': False, },
+            'min': {'title': _('Min')},
+            'max': {'title': _('Max')},
+            'error': {'title': _('Permitted Error %')},
         }
 
+        columns = ['Title', ]
         ShowPrices = self.context.bika_setup.getShowPrices()
-        columns = ['Title', 'Price', 'Partition'] if ShowPrices \
-            else ['Title', 'Partition']
+        if ShowPrices:
+            columns.append('Price')
+        ShowPartitions = self.context.bika_setup.getShowPartitions()
+        if ShowPartitions:
+            columns.append('Partition')
+        EnableARSpecs = self.context.bika_setup.getEnableARSpecs()
+        if EnableARSpecs:
+            columns.append('min')
+            columns.append('max')
+            columns.append('error')
 
         self.review_states = [
             {'id': 'default',
@@ -1144,9 +1168,6 @@ class AnalysisRequestAnalysesView(BikaListingView):
                                          'getContainer',
                                          'getPreservation',
                                          'state_title']
-
-        if not context.bika_setup.getShowPartitions():
-            self.review_states[0]['columns'].remove('Partition')
 
         self.parts = p.contents_table()
 
@@ -1206,21 +1227,31 @@ class AnalysisRequestAnalysesView(BikaListingView):
             items[x]['before']['Price'] = symbol
             items[x]['Price'] = obj.getPrice()
             items[x]['class']['Price'] = 'nowrap'
-            items[x]['allow_edit'] = ['Partition', ]
-            if not logged_in_client(self.context):
-                items[x]['allow_edit'].append('Price')
-            if not items[x]['selected']:
-                items[x]['edit_condition'] = {'Partition': False, 'Price': False}
+
+            if items[x]['selected']:
+                items[x]['allow_edit'] = ['Partition', 'min', 'max', 'error']
+                if not logged_in_client(self.context):
+                    items[x]['allow_edit'].append('Price')
 
             items[x]['required'].append('Partition')
             items[x]['choices']['Partition'] = partitions
 
             if obj.UID() in self.analyses:
-                part = self.analyses[obj.UID()].getSamplePartition()
+                analysis = self.analyses[obj.UID()]
+                part = analysis.getSamplePartition()
                 part = part and part or obj
                 items[x]['Partition'] = part.Title()
+                spec = analysis.specification \
+                    if hasattr(analysis, 'specification') \
+                    else {"min": "", "max": "", "error": ""}
+                items[x]["min"] = spec["min"]
+                items[x]["max"] = spec["max"]
+                items[x]["error"] = spec["error"]
             else:
                 items[x]['Partition'] = ''
+                items[x]["min"] = ''
+                items[x]["max"] = ''
+                items[x]["error"] = ''
 
             after_icons = ''
             if obj.getAccredited():
@@ -1512,7 +1543,16 @@ class ajaxAnalysisRequestSubmit():
                         parts[i]['container'] = d_clist
 
             # create the AR
-            Analyses = values['Analyses']
+            Analyses = values["Analyses"]
+
+            specs = {}
+            if len(values.get("min", [])):
+                for i, service_uid in enumerate(Analyses):
+                    specs[service_uid] = {
+                        "min": values["min"][i],
+                        "max": values["max"][i],
+                        "error": values["error"][i]
+                    }
 
             saved_form = self.request.form
             self.request.form = resolved_values
@@ -1584,7 +1624,7 @@ class ajaxAnalysisRequestSubmit():
 
             ARs.append(ar.getId())
 
-            new_analyses = ar.setAnalyses(Analyses, prices = prices)
+            new_analyses = ar.setAnalyses(Analyses, prices=prices, specs=specs)
             ar_analyses = ar.objectValues('Analysis')
 
             # Add analyses to sample partitions
