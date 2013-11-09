@@ -1,4 +1,7 @@
 import sys
+import time
+import transaction
+from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.content.bikaschema import BikaSchema
@@ -7,7 +10,10 @@ from bika.lims.interfaces import IARImport
 from bika.lims.jsonapi import resolve_request_lookup
 from bika.lims.workflow import doActionFor
 from bika.lims.utils import tmpID
-from AccessControl import ClassSecurityInfo
+from collective.progressbar.events import InitialiseProgressBar
+from collective.progressbar.events import ProgressBar
+from collective.progressbar.events import UpdateProgressEvent
+from collective.progressbar.events import ProgressState
 from DateTime import DateTime
 from Products.Archetypes import atapi
 from Products.Archetypes.event import ObjectInitializedEvent
@@ -240,6 +246,11 @@ class ARImport(BaseFolder):
             self._submit_arimport_p()
         else:
             self._submit_arimport_c()
+        transaction.commit()
+        #TODO time.sleep(2)
+        self.REQUEST.response.write(
+            '<script>document.location.href="%s"</script>' % (
+                self.absolute_url()))
 
     def _submit_arimport_c(self):
         """ load the classic import layout """
@@ -283,17 +294,16 @@ class ARImport(BaseFolder):
             valid_batch = False
 
         aritems = self.objectValues('ARImportItem')
-        pad = 8192 * ' '
-        #REQUEST = self.REQUEST
-        #REQUEST.RESPONSE.write(self.progress_bar(REQUEST = REQUEST))
-        #REQUEST.RESPONSE.write('<input style="display: none;" id="progressType" value="Analysis request submission">')
-        #REQUEST.RESPONSE.write('<input style="display: none;" id="progressDone" value="Completed">')
-
-        #REQUEST.RESPONSE.write(pad + '<input style="display: none;" id="inputTotal" value="%s">' % len(aritems))
+        request = self.REQUEST
+        title = 'Submitting AR Import'
+        bar = ProgressBar(
+                self, request, title, description='')
+        event.notify(InitialiseProgressBar(bar))
 
         SamplingWorkflowEnabled = \
             self.bika_setup.getSamplingWorkflowEnabled()
         row_count = 0
+        item_count =len(aritems)
         prefix = 'Sample'
         for aritem in aritems:
             row_count += 1
@@ -372,10 +382,13 @@ class ARImport(BaseFolder):
 
             self._add_services_to_ar(ar, analyses)
 
-            #REQUEST.RESPONSE.write(pad + '<input style="display: none;" name="inputProgress" value="%s">' % row_count)
+            progress_index = float(row_count)/float(item_count)*100.0
+            progress = ProgressState(request, progress_index)
+            event.notify(UpdateProgressEvent(progress))
+            #TODO REmove for production - just to look pretty
+            #time.sleep(1)
         self.setDateApplied(DateTime())
         self.reindexObject()
-        #REQUEST.RESPONSE.write('<script>document.location.href="%s?portal_status_message=%s%%20submitted"</script>' % (self.absolute_url(), self.getId()))
 
     def _submit_arimport_p(self):
         """ load the profiles import layout """
@@ -424,14 +437,14 @@ class ARImport(BaseFolder):
         profiles = {}
         aritems = self.objectValues('ARImportItem')
 
-        pad = 8192 * ' '
-        #REQUEST = self.REQUEST
-        #REQUEST.RESPONSE.write(self.progress_bar(REQUEST = REQUEST))
-        #REQUEST.RESPONSE.write('<input style="display: none;" id="progressType" value="Analysis request submission">')
-        #REQUEST.RESPONSE.write('<input style="display: none;" id="progressDone" value="Completed">')
-        #REQUEST.RESPONSE.write(pad + '<input style="display: none;" id="inputTotal" value="%s">' % len(aritems))
+        request = self.REQUEST
+        title = 'Submitting AR Import'
+        bar = ProgressBar(
+                self, request, title, description='')
+        event.notify(InitialiseProgressBar(bar))
 
         row_count = 0
+        item_count = len(aritems)
         prefix = 'Sample'
         for aritem in aritems:
             # set up analyses
@@ -557,13 +570,13 @@ class ARImport(BaseFolder):
             aritem.setAnalysisRequest(ar_uid)
             ars.append(ar_id)
             ar._renameAfterCreation()
-            #REQUEST.RESPONSE.write(pad + '<input style="display: none;" name="inputProgress" value="%s">' % row_count)
-
+            progress_index = float(row_count)/float(item_count)*100.0
+            progress = ProgressState(request, progress_index)
+            event.notify(UpdateProgressEvent(progress))
             self._add_services_to_ar(ar, analyses)
 
         self.setDateApplied(DateTime())
         self.reindexObject()
-        #REQUEST.RESPONSE.write('<script>document.location.href="%s?portal_status_message=%s%%20submitted"</script>' % (self.absolute_url(), self.getId()))
 
 
     def _add_services_to_ar(self, ar, analyses):

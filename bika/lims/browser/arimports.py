@@ -1,4 +1,10 @@
 import csv
+import plone
+import time
+from collective.progressbar.events import InitialiseProgressBar
+from collective.progressbar.events import ProgressBar
+from collective.progressbar.events import UpdateProgressEvent
+from collective.progressbar.events import ProgressState
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import transaction_note
@@ -12,9 +18,7 @@ from bika.lims.interfaces import IARImport
 from bika.lims.utils import tmpID
 from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
-import plone
-import zope.event
-
+from zope.event import notify
 
 class ARImportView(BrowserView):
     implements(IViewView)
@@ -155,6 +159,7 @@ class ClientARImportAddView(BrowserView):
 
     def __call__(self):
         request = self.request
+        response = request.response
         form = request.form
         plone.protect.CheckAuthenticator(form)
         if form.get('submitted'): 
@@ -174,12 +179,14 @@ class ClientARImportAddView(BrowserView):
             if arimport:
                 msg = "AR Import complete"
                 IStatusMessage(request).addStatusMessage(_(msg), "info")
-                request.response.redirect(arimport.absolute_url())
+                request.response.write(
+                    '<script>document.location.href="%s"</script>' % (
+                        arimport.absolute_url()))
                 return 
             else:
                 IStatusMessage(request).addStatusMessage(_(msg), "error")
-                request.response.redirect('%s/arimport_add' % (
-                    self.context.absolute_url()))
+                request.response.write(
+                    '<script>document.location.href="%s/arimport_add"</script>' % (self.context.absolute_url()))
                 return 
         return self.template()
 
@@ -249,17 +256,23 @@ class ClientARImportAddView(BrowserView):
 
         pad = 8192*' '
         request = self.request
-        #request.response.write(self.progress_bar(request=request))
-        #request.response.write('<input style="display: none;" id="progressType" value="Analysis request import">')
-        #request.response.write('<input style="display: block;" id="progressDone" value="Validating...">')
-        #request.response.write(pad+'<input style="display: block;" id="inputTotal" value="%s">' % len(samples))
 
+        title = 'Importing file'
+        bar = ProgressBar(
+                self.context, self.request, title, description='')
+        notify(InitialiseProgressBar(bar))
+
+        sample_count = len(samples)
         row_count = 0
         for sample in samples:
             next_num = tmpID()
             row_count = row_count + 1
-            #request.response.write(pad+'<input style="display: none;" name="inputProgress" value="%s">' % row_count)
             item_remarks = []
+            progress_index = float(row_count)/float(sample_count)*100.0
+            progress = ProgressState(self.request, progress_index)
+            notify(UpdateProgressEvent(progress))
+            #TODO REmove for production - just to look pretty
+            #time.sleep(1)
             analyses = []
             for i in range(10, len(sample)):
                 if sample[i] != '1':
@@ -317,6 +330,5 @@ class ClientARImportAddView(BrowserView):
             )
 
         valid = arimport.validateIt()
-        #request.response.write('<script>document.location.href="%s/client_arimports?portal_status_message=%s%%20imported"</script>' % (client.absolute_url(), arimport_id))
         return arimport, msg
 

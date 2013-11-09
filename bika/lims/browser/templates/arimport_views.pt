@@ -181,9 +181,31 @@
             <td tal:content="aritem/getReportDryMatter">ReportDM</td>
             <td tal:content="aritem/getPriority">ReportDM</td>
             <td tal:content="aritem/getOrderID">OrderID</td>
-            <td tal:condition="python: len(aritem.getAnalysisProfile()) == 1"
-                tal:content="python: aritem.getAnalysisProfile()[0]">Profile</td>
-            <td tal:condition="python: len(aritem.getAnalysisProfile()) != 1">Error</td>
+            <td tal:condition="classic">
+              <a  onMouseover=""
+                  onMouseout=""
+                  tal:attributes="
+                      onMouseover string:showPopup('Analyses.${repeat/aritem/number}');
+                      onMouseout string:hidePopup('Analyses.${repeat/aritem/number}')">
+                  <span i18n:translate="label_Detail">Detail</span>
+              </a>
+              <div id=""
+                   class="uncertaintydiv"
+                   style="visibility:hidden"
+                   tal:attributes="id string:Analyses.${repeat/aritem/number}" >
+                  <table class="uncertaintytable"
+                         tal:define="analyses python:aritem.getAnalyses() or aritem.getAnalysisProfile()">
+                      <tr tal:repeat="analysis analyses">
+                      <td tal:content="analysis"/>
+                  </tr>
+                  </table>
+              </div>
+            </td>
+            <td tal:condition="python: not classic">
+                <span tal:condition="python: len(aritem.getAnalysisProfile()) == 1"
+                      tal:content="python: aritem.getAnalysisProfile()[0]">Profile</span>
+                <span tal:condition="python: len(aritem.getAnalysisProfile()) != 1">Error</span>
+            </td>
             <td class="left"
                 tal:define="valid python:len(aritem.getRemarks()) == 0 ">
                 <span tal:condition="valid">Yes</span>
