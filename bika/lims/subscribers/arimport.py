@@ -25,3 +25,18 @@ def AfterTransitionEventHandler(instance, event):
     instance.workflow_script_submit()
     
 
+def ARImportModifiedEventHandler(instance, event):
+
+    if instance.portal_type != "ARImport":
+        print 'How does this happen'
+        return
+
+    instance.validateIt()
+
+def ARImportItemModifiedEventHandler(instance, event):
+
+    if instance.portal_type != "ARImportItem":
+        print 'How does this happen'
+        return
+
+    instance.aq_inner.aq_parent.validateIt()
