@@ -764,8 +764,6 @@ class ARImport(BaseFolder):
         if samplepoint != None:
             points = pc(portal_type='SamplePoint', 
                 Title=samplepoint)
-            if len(points) == 0:
-                batch_remarks.append('\nNew Sample point will be added')
 
         sampletypes = \
             [p.Title for p in pc(portal_type="SampleType")]

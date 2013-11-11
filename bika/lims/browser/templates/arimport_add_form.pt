@@ -57,7 +57,7 @@
         <div class="field">
             <label i18n:translate="label_import_ar_file"
                 >Select Analysis request data file</label><br/>
-            <input type="file" name="csvfile" size="60"/>
+            <input id="arimport_file" type="file" name="csvfile" size="60"/>
         </div>
         <input tabindex=""
             class="context"
