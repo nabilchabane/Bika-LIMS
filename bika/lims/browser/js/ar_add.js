@@ -290,12 +290,20 @@ function ar_referencewidget_select_handler(event, ui){
 	$(this).trigger("selected", ui.item.UID);
 }
 
+function add_path_filter_to_spec_lookups(){
+	for (var col=0; col<parseInt($("#col_count").val(), 10); col++) {
+		var element = $("#ar_"+col+"_Specification");
+		var bq = $.parseJSON($(element).attr("base_query"));
+		bq["path"] = [$("#PhysicalPath").attr("lab_specs"), $("#PhysicalPath").attr("here")];
+		$(element).attr("base_query", $.toJSON(bq));
+	}
+}
+
 // we do the referencewidget_lookups differently to the widget default.
 // We also include a bunch of ar_add specific on-change stuff, since the
 // popup widget takes over the .change event completely.
 function ar_referencewidget_lookups(elements){
-	// var _ = window.jarn.i18n.MessageFactory("bika");
-	// var PMF = window.jarn.i18n.MessageFactory("plone");
+	add_path_filter_to_spec_lookups();
 	var inputs;
 	if(elements === undefined){
 		inputs = $("input.referencewidget").not(".has_combogrid_widget");

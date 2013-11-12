@@ -75,6 +75,11 @@
             value python: dms.UID();"/>
 </tal:i>
 
+<input type="hidden"
+    id="PhysicalPath"
+    tal:attributes="here python:'/'.join(context.getPhysicalPath()[:-3]);
+                    lab_specs python:'/'.join(context.bika_setup.bika_analysisspecs.getPhysicalPath())"/>
+
 <table summary="Add analysis requests"
     class="listing analysisrequest add nosort"
     cellpadding="0" cellspacing="0">
