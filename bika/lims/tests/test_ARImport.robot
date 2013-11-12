@@ -27,6 +27,8 @@ Test AR Importing dependencies
 
     Import Profile Valid AR 
     Submit Valid AR Import
+    Import Profile AR File with invalid filename 
+    Import Profile AR File with errors
 
 *** Keywords ***
 
@@ -66,6 +68,24 @@ Import Profile Valid AR
     sleep                       5s
     Page Should Contain         Valid
     Page Should Not Contain     Error
+
+Import Profile AR File with invalid filename 
+    Go to                       http://localhost:55001/plone/clients/client-1
+    Wait until page contains    Imports
+    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileInvalidFilename.csv
+    Page Should Contain         Error
+    Page Should Contain         does not match entered filename
+    
+Import Profile AR File with errors
+    Go to                       http://localhost:55001/plone/clients/client-1
+    Wait until page contains    Imports
+    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileErrors.csv
+    sleep                       5s
+    Page Should Contain         Remarks
+    Page Should Contain         Client ID should be
+    Page Should Contain         Contact invalid
+    Page Should Contain         Sample type WrongType invalid
+    
     
 Submit Valid AR Import
     Open Workflow Menu
