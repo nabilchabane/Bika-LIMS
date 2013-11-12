@@ -6,6 +6,7 @@ from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import ManageBika, PROJECTNAME
+from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IARImport
 from bika.lims.jsonapi import resolve_request_lookup
 from bika.lims.workflow import doActionFor
@@ -227,6 +228,7 @@ class ARImport(BaseFolder):
     schema = schema
     displayContentsTab = False
     implements (IARImport)
+    _at_rename_after_creation = True
 
     #def Title(self):
     #    """ Return the id as title """
@@ -236,6 +238,9 @@ class ARImport(BaseFolder):
     def current_date(self):
         """ return current date """
         return DateTime()
+
+    def _renameAfterCreation(self, check_auto_id=False):
+        renameAfterCreation(self)
 
 
     # workflow methods

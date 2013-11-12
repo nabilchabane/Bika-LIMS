@@ -19,10 +19,14 @@ ${input_identifier} =  input#arimport_file
 
 Test AR Importing dependencies
     Log in                      test_labmanager  test_labmanager
-    Import Valid AR File
-    Submit Valid AR File
-    Import AR File with invalid filename 
-    Import Invalid AR File
+
+    Import Classic Valid AR
+    Submit Valid AR Import
+    Import Classic AR File with invalid filename 
+    Import Classic AR File with errors
+
+    Import Profile Valid AR 
+    Submit Valid AR Import
 
 *** Keywords ***
 
@@ -30,44 +34,68 @@ Start browser
     Open browser                http://localhost:55001/plone/login
     Set selenium speed          ${SELENIUM_SPEED}
 
-Import AR File with invalid filename 
+Import Classic AR File with invalid filename 
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import ARImport             ${PATH_TO_TEST_FILES}/Bika3ARImportInvalidFileName.csv
-    sleep                       5s
+    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicInvalidFilename.csv
     Page Should Contain         Error
     Page Should Contain         does not match entered filename
     
-Import Invalid AR File
+Import Classic AR File with errors
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import ARImport             ${PATH_TO_TEST_FILES}/Bika3ARImportInvalid.csv
+    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicErrors.csv
     sleep                       5s
-    Page Should Contain         Invalid
+    Page Should Contain         Remarks
+    Page Should Contain         Client ID should be
+    Page Should Contain         Contact invalid
+    Page Should Contain         Sample type WrongType invalid
     
-Import Valid AR File
+Import Classic Valid AR
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import ARImport             ${PATH_TO_TEST_FILES}/Bika3ARImportValid.csv
+    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicValid.csv
     sleep                       5s
     Page Should Contain         Valid
+    Page Should Not Contain     Error
     
-Submit Valid AR File
+Import Profile Valid AR 
+    Go to                       http://localhost:55001/plone/clients/client-1
+    Wait until page contains    Imports
+    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileValid.csv
+    sleep                       5s
+    Page Should Contain         Valid
+    Page Should Not Contain     Error
+    
+Submit Valid AR Import
     Open Workflow Menu
     Click Link                  link=Submit ARImport
     Wait until page contains    View
     Page Should Contain         Submitted
     
-    
-
-Import ARImport
+Import Classic ARImport
     [arguments]  ${file}
 
     Click Link                  Imports
     Wait until page contains    AR Import
     Click Link                  AR Import
     Wait until page contains    Import Analysis Request Data
-    Click Button                xpath=/html/body/div/div[2]/div/div[2]/div[2]/div/form/div[2]/input
+    Select Import Option        c
+    Import ARImport File        ${file}
+
+Import Profile ARImport
+    [arguments]  ${file}
+
+    Click Link                  Imports
+    Wait until page contains    AR Import
+    Click Link                  AR Import
+    Wait until page contains    Import Analysis Request Data
+    Select Import Option        p
+    Import ARImport File        ${file}
+
+Import ARImport File
+    [arguments]  ${file}
+
     Choose File                 css=${input_identifier}  ${file}
     Wait until page contains    Import Analysis Request Data
     Click Button                Import
@@ -90,3 +118,9 @@ Open Menu
     Click link  css=dl#${elementId} dt.actionMenuHeader a
     Wait until keyword succeeds  5s  1s  Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
 
+Select Import Option
+    [Arguments]  ${option}
+
+    [Documentation]  LOG Set Import Option to ${option}
+    Select Radio Button  ImportOption  ${option}
+    Radio Button Should Be Set To  ImportOption  ${option}

@@ -328,6 +328,7 @@ class ClientARImportAddView(BrowserView):
             Analyses = sample_headers, 
             DateImported=DateTime(),
             )
+        arimport._renameAfterCreation()
 
         valid = arimport.validateIt()
         return arimport, msg

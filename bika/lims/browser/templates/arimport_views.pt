@@ -31,8 +31,10 @@
         </tr>
         <tr tal:define="contact context/getContact | nothing;">
             <th i18n:translate="label_contact">Contact Name</th>
-            <td class="left" tal:attributes="colspan python:left_col"
-                tal:content="contact/Title">JonesJJ</td>
+            <td class="left" tal:attributes="colspan python:left_col">
+                <span tal:condition="contact"
+                      tal:content="contact/Title">JonesJJ</span>
+            </td>
             <th i18n:translate="label_contactid">Contact ID</th>
             <td class="left" tal:attributes="colspan python:right_col"
                 tal:content="context/getContactID">JonesJJ</td>
