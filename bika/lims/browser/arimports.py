@@ -14,7 +14,6 @@ from bika.lims import PMF, logger, bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.permissions import *
-from bika.lims.interfaces import IARImport
 from bika.lims.utils import tmpID
 from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
@@ -58,15 +57,17 @@ class ARImportView(BrowserView):
                 self.context.aq_parent, 'review_state') == 'submitted'
         
 
-class ClientARImportsView(BikaListingView):
+class GlobalARImportsView(BikaListingView):
     implements(IViewView)
 
     def __init__(self, context, request):
-        super(ClientARImportsView, self).__init__(context, request)
+        super(GlobalARImportsView, self).__init__(context, request)
+        request.set('disable_plone.rightcolumn', 1)
+        request.set('disable_border', 1)
+
         self.catalog = "portal_catalog"
         self.contentFilter = {
                 'portal_type': 'ARImport',
-                'path': {'query': '/'.join(self.context.getPhysicalPath())},
                 'sort_on':'sortable_title',
                 }
         self.context_actions = \
@@ -84,6 +85,91 @@ class ClientARImportsView(BikaListingView):
         self.title = _("Analysis Request Imports")
         self.description = ""
 
+
+        self.columns = {
+            'title': {'title': _('Import')},
+            'getClientTitle': {'title': _('Client')},
+            'getDateImported': {'title': _('Date Imported')},
+            'getStatus': {'title': _('Validity')},
+            'getDateApplied': {'title': _('Date Submitted')},
+            'state_title': {'title': _('State')},
+        }
+        self.review_states = [
+            {'id':'default',
+             'title': _('All'),
+             'contentFilter':{},
+             'columns': ['title',
+                         'getClientTitle',
+                         'getDateImported',
+                         'getStatus',
+                         'getDateApplied',
+                         'state_title']},
+            {'id':'imported',
+             'title': _('Imported'),
+             'contentFilter':{'review_state':'imported'},
+             'columns': ['title',
+                         'getClientTitle',
+                         'getDateImported',
+                         'getStatus']},
+            {'id':'submitted',
+             'title': _('Applied'),
+             'contentFilter':{'review_state':'submitted'},
+             'columns': ['title',
+                         'getClientTitle',
+                         'getDateImported',
+                         'getStatus',
+                         'getDateApplied']},
+        ]
+
+    def folderitems(self):
+        items = BikaListingView.folderitems(self)
+        for x in range(len(items)):
+            if not items[x].has_key('obj'): continue
+
+            obj = items[x]['obj']
+            items[x]['replace']['title'] = \
+                "<a href='%s'>%s</a>" % (items[x]['url'], items[x]['title'])
+            items[x]['replace']['getClientTitle'] = \
+                "<a href='%s'>%s</a>" % (
+                        obj.aq_parent.absolute_url(), obj.aq_parent.Title())
+
+        return items
+
+    def get_toggles(self, workflow_type):
+        if workflow_type == 'sample':
+            states = context.sample_workflow_states()
+        elif workflow_type == 'standardsample':
+            states = context.standardsample_workflow_states()
+        elif workflow_type == 'order':
+            states = context.order_workflow_states()
+        elif workflow_type == 'analysisrequest':
+            states = context.analysis_workflow_states()
+        elif workflow_type == 'worksheet':
+            states = context.worksheet_workflow_states()
+        elif workflow_type == 'arimport':
+            states = context.arimport_workflow_states()
+        else:
+             states = []
+
+        toggles = []
+        toggle_cats = ({'id':'all', 'title':'All'},)
+        for cat in toggle_cats:
+            toggles.append( {'id': cat['id'], 'title': cat['title']} )
+        for state in states:
+            toggles.append(state)
+        return toggles
+    
+    def getAR(self):
+        import pdb; pdb.set_trace()
+
+class ClientARImportsView(GlobalARImportsView):
+    def __init__(self, context, request):
+        super(ClientARImportsView, self).__init__(context, request)
+        self.contentFilter = {
+                'portal_type': 'ARImport',
+                'path': {'query': '/'.join(context.getPhysicalPath())},
+                'sort_on':'sortable_title',
+                }
         self.columns = {
             'title': {'title': _('Import')},
             'getDateImported': {'title': _('Date Imported')},
@@ -114,43 +200,6 @@ class ClientARImportsView(BikaListingView):
                          'getStatus',
                          'getDateApplied']},
         ]
-
-    def folderitems(self):
-        items = BikaListingView.folderitems(self)
-        for x in range(len(items)):
-            if not items[x].has_key('obj'): continue
-
-            items[x]['replace']['title'] = "<a href='%s'>%s</a>" % \
-                 (items[x]['url'], items[x]['title'])
-
-        return items
-
-    def get_toggles(self, workflow_type):
-        if workflow_type == 'sample':
-            states = context.sample_workflow_states()
-        elif workflow_type == 'standardsample':
-            states = context.standardsample_workflow_states()
-        elif workflow_type == 'order':
-            states = context.order_workflow_states()
-        elif workflow_type == 'analysisrequest':
-            states = context.analysis_workflow_states()
-        elif workflow_type == 'worksheet':
-            states = context.worksheet_workflow_states()
-        elif workflow_type == 'arimport':
-            states = context.arimport_workflow_states()
-        else:
-             states = []
-
-        toggles = []
-        toggle_cats = ({'id':'all', 'title':'All'},)
-        for cat in toggle_cats:
-            toggles.append( {'id': cat['id'], 'title': cat['title']} )
-        for state in states:
-            toggles.append(state)
-        return toggles
-    
-    def getAR(self):
-        import pdb; pdb.set_trace()
 
 
 class ClientARImportAddView(BrowserView):

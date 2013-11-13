@@ -435,6 +435,10 @@ class ISetupDataImporter(Interface):
     the load_setup_data xlsx workbooks.
     """
 
+class IARImportFolder(Interface):
+
+    "Marker interface for a folder that can list ARImports"
+
 class IARImport(Interface):
 
     "Marker interface for an ARImport"
