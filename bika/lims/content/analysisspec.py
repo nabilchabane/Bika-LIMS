@@ -107,6 +107,14 @@ class AnalysisSpec(BaseFolder, HistoryAwareMixin):
         from bika.lims.idserver import renameAfterCreation
         renameAfterCreation(self)
 
+    def Title(self):
+        if not self.title:
+            title = self.getSampleType().Title() \
+                if self.getSampleType() \
+                else self.id
+            return title
+        return self.title
+
     security.declarePublic('contextual_title')
     def contextual_title(self):
         parent = self.aq_parent
