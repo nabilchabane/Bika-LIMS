@@ -108,6 +108,9 @@ class AnalysisSpec(BaseFolder, HistoryAwareMixin):
         renameAfterCreation(self)
 
     def Title(self):
+        if not self.id:
+            # this won't work too early in the creation stage
+            return ''
         if not self.title:
             title = self.getSampleType().Title() \
                 if self.getSampleType() \
@@ -115,7 +118,6 @@ class AnalysisSpec(BaseFolder, HistoryAwareMixin):
             return title
         return self.title
 
-    security.declarePublic('contextual_title')
     def contextual_title(self):
         parent = self.aq_parent
         if parent == self.bika_setup.bika_analysisspecs:

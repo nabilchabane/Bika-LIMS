@@ -44,22 +44,22 @@ def isOutOfRange(result, Min, Max, error):
         if isOutOfShoulderRange(result, Min, Max, error):
             return True, True
         else:
-            return False, None, None  # No Min and Max values defined
+            return False, None  # No Min and Max values defined
     elif spec_min and spec_max and spec_min <= result <= spec_max:
         if isOutOfShoulderRange(result, Min, Max, error):
             return True, True
         else:
-            return False, None, None  # Min and Max values defined
+            return False, None  # Min and Max values defined
     elif spec_min and not spec_max and spec_min <= result:
         if isOutOfShoulderRange(result, Min, Max, error):
             return True, True
         else:
-            return False, None, None  # Max value not defined
+            return False, None  # Max value not defined
     elif not spec_min and spec_max and spec_max >= result:
         if isOutOfShoulderRange(result, Min, Max, error):
             return True, True
         else:
-            return False, None, None  # Min value not defined
+            return False, None  # Min value not defined
     if isOutOfShoulderRange(result, Min, Max, error):
         return True, True
     return True, None
