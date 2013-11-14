@@ -790,9 +790,20 @@ class ARImport(BaseFolder):
         for aritem in aritems:
             item_remarks = []
             valid_item = True
+            #validate sample type
             if aritem.getSampleType() not in sampletypes:
-                batch_remarks.append('\n' + '%s: Sample type %s invalid' %(aritem.getSampleName(), aritem.getSampleType()))
-                item_remarks.append('\n' + 'Sample type %s invalid' %(aritem.getSampleType()))
+                batch_remarks.append('\n%s: Sample type %s invalid' %(
+                    aritem.getSampleName(), aritem.getSampleType()))
+                item_remarks.append(
+                    '\nSample type %s invalid' %(aritem.getSampleType()))
+                valid_item = False
+            #validate container type
+            if aritem.getContainerType() not in containertypes:
+                batch_remarks.append(
+                    '\n%s: Container type %s invalid' %(
+                        aritem.getSampleName(), aritem.getContainerType()))
+                item_remarks.append(
+                    '\nContainer type %s invalid' %(aritem.getContainerType()))
                 valid_item = False
             #validate Sample Date
             try:
