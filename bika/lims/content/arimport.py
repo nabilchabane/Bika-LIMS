@@ -701,6 +701,7 @@ class ARImport(BaseFolder):
     def validateIt(self):
         rc = getToolByName(self, 'reference_catalog')
         pc = getToolByName(self, 'portal_catalog')
+        bsc = getToolByName(self, 'bika_setup_catalog')
         client = self.aq_parent
         batch_remarks = []
         valid_batch = True
@@ -772,10 +773,11 @@ class ARImport(BaseFolder):
 
         sampletypes = \
             [p.Title for p in pc(portal_type="SampleType")]
+        containertypes = \
+            [p.Title for p in bsc(portal_type="ContainerType")]
         service_keys = []
         dependant_services = {}
 
-        bsc = getToolByName(self, 'bika_setup_catalog')
         services = bsc(portal_type = "AnalysisService",
                        inactive_state = 'active')
         for brain in services:
