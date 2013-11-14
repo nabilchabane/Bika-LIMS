@@ -5,7 +5,7 @@ from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.config import ManageBika, PROJECTNAME
+from bika.lims.config import ManageBika, PROJECTNAME, ARIMPORT_OPTIONS
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IARImport
 from bika.lims.jsonapi import resolve_request_lookup
@@ -29,9 +29,11 @@ from zope.interface import implements
 
 schema = BikaSchema.copy() + Schema((
     StringField('ImportOption',
-        widget = StringWidget(
+        widget = SelectionWidget(
             label = _("Import Option"),
+            format='select',
         ),
+        vocabulary = ARIMPORT_OPTIONS,
     ),
     StringField('FileName',
         searchable = True,
@@ -43,6 +45,8 @@ schema = BikaSchema.copy() + Schema((
         searchable = True,
         widget = FileWidget(
             label = _("Original File"),
+            visible={'edit': 'invisible', 
+                     'view': 'visible', 'add': 'invisible'},
         ),
     ),
     StringField('ClientTitle',
@@ -95,7 +99,6 @@ schema = BikaSchema.copy() + Schema((
         vocabulary_display_path_bound = sys.maxint,
         widget=ReferenceWidget(
             label=_("Contact"),
-            render_own_label=True,
             size=12,
             helper_js=("bika_widgets/referencewidget.js", "++resource++bika.lims.js/contact.js"),
             visible={'edit': 'visible', 'view': 'visible', 'add': 'visible'},
@@ -120,11 +123,11 @@ schema = BikaSchema.copy() + Schema((
     ReferenceField('CCContact',
         allowed_types = ('Contact',),
         relationship = 'ARImportCCContact',
-        default_method = 'getContactUIDForUser',
+        default_method = 'getCCContactUIDForUser',
         referenceClass = HoldingReference,
+        vocabulary_display_path_bound = sys.maxint,
         widget=ReferenceWidget(
-            label=_("Contact"),
-            render_own_label=True,
+            label=_("CCContact"),
             size=12,
             helper_js=("bika_widgets/referencewidget.js", "++resource++bika.lims.js/contact.js"),
             visible={'edit': 'visible', 'view': 'visible', 'add': 'visible'},
@@ -686,6 +689,20 @@ class ARImport(BaseFolder):
     security.declarePublic('getContactUIDForUser')
     def getContactUIDForUser(self):
         """ get the UID of the contact associated with the authenticated
+            user
+        """
+        user = self.REQUEST.AUTHENTICATED_USER
+        user_id = user.getUserName()
+        r = self.portal_catalog(
+            portal_type = 'Contact',
+            getUsername = user_id
+        )
+        if len(r) == 1:
+            return r[0].UID
+
+    security.declarePublic('getCCContactUIDForUser')
+    def getCCContactUIDForUser(self):
+        """ get the UID of the cc contact associated with the authenticated
             user
         """
         user = self.REQUEST.AUTHENTICATED_USER
