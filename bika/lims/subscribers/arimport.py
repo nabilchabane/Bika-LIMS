@@ -22,7 +22,8 @@ def AfterTransitionEventHandler(instance, event):
     if not event.transition:
         return
 
-    instance.workflow_script_submit()
+    if event.transition.id == 'submit':
+        instance.workflow_script_submit()
     
 
 def ARImportModifiedEventHandler(instance, event):
