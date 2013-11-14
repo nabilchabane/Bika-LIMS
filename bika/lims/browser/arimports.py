@@ -293,6 +293,7 @@ class ClientARImportAddView(BrowserView):
                 client.invokeFactory(
                         id=arimport_id, type_name='ARImport', title=title)
                 arimport = client._getOb(arimport_id)
+                arimport.unmarkCreationFlag()
                 continue
             elif row_count == 3:
                 sample_headers = row[10:]
