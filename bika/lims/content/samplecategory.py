@@ -18,7 +18,7 @@ schema = BikaSchema.copy() + Schema((
 schema['description'].schemata = 'default'
 schema['description'].widget.visible = True
 
-class SampleMatrix(BaseFolder):
+class SampleCategory(BaseFolder):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
@@ -28,13 +28,13 @@ class SampleMatrix(BaseFolder):
         from bika.lims.idserver import renameAfterCreation
         renameAfterCreation(self)
 
-registerType(SampleMatrix, PROJECTNAME)
+registerType(SampleCategory, PROJECTNAME)
 
-def SampleMatrices(self, instance=None, allow_blank=False):
+def SampleCategories(self, instance=None, allow_blank=False):
     instance = instance or self
     bsc = getToolByName(instance, 'bika_setup_catalog')
     items = []
-    for sm in bsc(portal_type='SampleMatrix',
+    for sm in bsc(portal_type='SampleCategory',
                   inactive_state='active',
                   sort_on = 'sortable_title'):
         items.append((sm.UID, sm.Title))

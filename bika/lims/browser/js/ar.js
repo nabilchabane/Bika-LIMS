@@ -103,5 +103,24 @@ $(document).ready(function(){
 	$("#SampleType").autocomplete({ minLength: 0, source: autocomplete_sampletype});
 	$("#SamplePoint").autocomplete({ minLength: 0, source: autocomplete_samplepoint});
 
+	// Update sample matrix when sample type changed in AnalysisRequestViewView
+	// Must be only loaded in AnalysisRequestViewView:
+	//  /clients/<client_id>/<ar_id>
+	//  /clients/<client_id>/<ar_id>/base_view
+	if (window.location.href.search('/clients/') >= 0) {
+		clientid =  window.location.href.split('/clients/')[1].split('/')[0];
+		arid = $(".documentFirstHeading").html();
+		if (arid && window.location.href.search('/clients/'+clientid+'/'+arid)) {
+			$("#SampleType").autocomplete({
+		        select: function (event, ui) {
+		        	populate_sampletype(ui.item.value);
+		        }
+		    });
+			if ($("input[id='SampleMatrix']")) {
+				$("input[id='SampleMatrix']").attr('readonly', true);
+			}
+		}
+	}
+	
 });
 }(jQuery));

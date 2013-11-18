@@ -3550,13 +3550,12 @@ msgstr ""
 msgid "Sample ID Padding"
 msgstr ""
 #
-# File: ../controlpanel/bika_samplematrices.py, line: 31
-msgid "Sample Matrices"
+# File: ../controlpanel/bika_samplecategories.py, line: 31
+msgid "Sample Categories"
 msgstr ""
 #
 # File: ../content/sampletype.py, line: 46
-# File: ../controlpanel/bika_samplematrices.py, line: 40
-msgid "Sample Matrix"
+msgid "Sample Category"
 msgstr ""
 #
 # File: ../browser/sample.py, line: 32

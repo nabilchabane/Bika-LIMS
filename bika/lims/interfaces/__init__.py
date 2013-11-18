@@ -106,14 +106,14 @@ class ISampleConditions(Interface):
     """Sample Conditions"""
 
 
-class ISampleMatrix(Interface):
+class ISampleCategory(Interface):
 
-    """Sample Matrix"""
+    """Sample Category"""
 
 
-class ISampleMatrices(Interface):
+class ISampleCategories(Interface):
 
-    """Sample Matrices"""
+    """Sample Categories"""
 
 
 class ISamplePartition(Interface):

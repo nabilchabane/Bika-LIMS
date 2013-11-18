@@ -35,15 +35,15 @@ schema = BikaSchema.copy() + Schema((
             description = _("Samples of this type should be treated as hazardous"),
         ),
     ),
-    ReferenceField('SampleMatrix',
+    ReferenceField('SampleCategory',
         required = 0,
-        allowed_types = ('SampleMatrix',),
-        vocabulary = 'SampleMatricesVocabulary',
-        relationship = 'SampleTypeSampleMatrix',
+        allowed_types = ('SampleCategory',),
+        vocabulary = 'SampleCategoriesVocabulary',
+        relationship = 'SampleTypeSampleCategory',
         referenceClass = HoldingReference,
         widget = ReferenceWidget(
             checkbox_bound = 0,
-            label = _('Sample Matrix'),
+            label = _('Sample Category'),
         ),
     ),
     StringField('Prefix',
@@ -174,9 +174,9 @@ class SampleType(BaseContent, HistoryAwareMixin):
     def getSamplePoints(self, **kw):
         return self.Schema()['SamplePoints'].get(self)
 
-    def SampleMatricesVocabulary(self):
-        from bika.lims.content.samplematrix import SampleMatrices
-        return SampleMatrices(self, allow_blank=True)
+    def SampleCategoriesVocabulary(self):
+        from bika.lims.content.samplecategory import SampleCategories
+        return SampleCategories(self, allow_blank=True)
 
     def ContainerTypesVocabulary(self):
         from bika.lims.content.containertype import ContainerTypes

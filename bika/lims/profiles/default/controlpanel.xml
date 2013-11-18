@@ -75,10 +75,10 @@
   <permission>BIKA: Manage Bika</permission>
  </configlet>
 
- <configlet title="Sample Matrices" action_id="bika_samplematrices"
+ <configlet title="Sample Categories" action_id="bika_samplecategories"
     appId="bika.lims" category="bika" condition_expr=""
-    icon_expr="string:++resource++bika.lims.images/samplematrix.png"
-    url_expr="string:$portal_url/bika_setup/bika_samplematrices"
+    icon_expr="string:++resource++bika.lims.images/samplecategory.png"
+    url_expr="string:$portal_url/bika_setup/bika_samplecategories"
 	visible="True"
 	i18n:attributes="title">
   <permission>BIKA: Manage Bika</permission>

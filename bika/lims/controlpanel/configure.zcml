@@ -77,9 +77,9 @@
     />
 
     <browser:page
-      for="bika.lims.interfaces.ISampleMatrices"
+      for="bika.lims.interfaces.ISampleCategories"
       name="folder_view"
-      class=".bika_samplematrices.SampleMatricesView"
+      class=".bika_samplecategories.SampleCategoriesView"
       permission="bika.lims.ManageBika"
       layer="bika.lims.interfaces.IBikaLIMS"
     />
