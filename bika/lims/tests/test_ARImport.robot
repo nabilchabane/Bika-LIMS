@@ -3,7 +3,7 @@
 Library          Selenium2Library  timeout=10  implicit_wait=0.2
 Library          String
 Resource         keywords.txt
-Resource         library-settings.txt
+Library          bika.lims.tests.testing_keywords.Keywords
 Resource         plone/app/robotframework/selenium.robot
 Resource         plone/app/robotframework/saucelabs.robot
 Variables        plone/app/testing/interfaces.py
@@ -14,6 +14,7 @@ Suite Teardown   Close All Browsers
 *** Variables ***
 
 ${input_identifier} =  input#arimport_file
+${PATH_TO_TEST} =
 
 *** Test Cases ***
 
@@ -22,12 +23,12 @@ Test AR Importing dependencies
 
     Import Classic Valid AR
     Submit Valid AR Import
-    Import Classic AR File with invalid filename 
+    Import Classic AR File with invalid filename
     Import Classic AR File with errors
 
-    Import Profile Valid AR 
+    Import Profile Valid AR
     Submit Valid AR Import
-    Import Profile AR File with invalid filename 
+    Import Profile AR File with invalid filename
     Import Profile AR File with errors
 
 *** Keywords ***
@@ -36,63 +37,68 @@ Start browser
     Open browser                http://localhost:55001/plone/login
     Set selenium speed          ${SELENIUM_SPEED}
 
-Import Classic AR File with invalid filename 
+Import Classic AR File with invalid filename
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicInvalidFilename.csv
+    Import Classic ARImport     /ARImportClassicInvalidFilename.csv
     Page Should Contain         Error
     Page Should Contain         does not match entered filename
-    
+
 Import Classic AR File with errors
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicErrors.csv
+    ${PATH_TO_TEST} =           run keyword   resource_filename
+    Import Classic ARImport     ${PATH_TO_TEST}/files/ARImportClassicErrors.csv
     sleep                       5s
     Page Should Contain         Remarks
     Page Should Contain         Client ID should be
     Page Should Contain         Contact invalid
     Page Should Contain         Sample type WrongType invalid
-    
+
 Import Classic Valid AR
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import Classic ARImport     ${PATH_TO_TEST_FILES}/ARImportClassicValid.csv
-    sleep                       5s
-    Page Should Contain         Valid
-    Page Should Not Contain     Error
-    
-Import Profile Valid AR 
-    Go to                       http://localhost:55001/plone/clients/client-1
-    Wait until page contains    Imports
-    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileValid.csv
+    ${PATH_TO_TEST} =           run keyword   resource_filename
+    Import Classic ARImport     ${PATH_TO_TEST}/files/ARImportClassicValid.csv
     sleep                       5s
     Page Should Contain         Valid
     Page Should Not Contain     Error
 
-Import Profile AR File with invalid filename 
+Import Profile Valid AR
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileInvalidFilename.csv
+    ${PATH_TO_TEST} =           run keyword   resource_filename
+    Import Profile ARImport     ${PATH_TO_TEST}/files/ARImportProfileValid.csv
+    sleep                       5s
+    Page Should Contain         Valid
+    Page Should Not Contain     Error
+
+Import Profile AR File with invalid filename
+    Go to                       http://localhost:55001/plone/clients/client-1
+    Wait until page contains    Imports
+    ${PATH_TO_TEST} =           run keyword   resource_filename
+    Import Profile ARImport     ${PATH_TO_TEST}/files/ARImportProfileInvalidFilename.csv
     Page Should Contain         Error
     Page Should Contain         does not match entered filename
-    
+
 Import Profile AR File with errors
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
-    Import Profile ARImport     ${PATH_TO_TEST_FILES}/ARImportProfileErrors.csv
+    ${PATH_TO_TEST} =           run keyword   resource_filename
+    Import Profile ARImport     ${PATH_TO_TEST}/files/ARImportProfileErrors.csv
     sleep                       5s
     Page Should Contain         Remarks
     Page Should Contain         Client ID should be
     Page Should Contain         Contact invalid
     Page Should Contain         Sample type WrongType invalid
-    
-    
+
+
 Submit Valid AR Import
     Open Workflow Menu
     Click Link                  link=Submit ARImport
     Wait until page contains    View
     Page Should Contain         Submitted
-    
+
 Import Classic ARImport
     [arguments]  ${file}
 
@@ -133,7 +139,7 @@ Open Workflow Menu
 Open Menu
     [Arguments]  ${elementId}
 
-    Element Should Be Visible  css=dl#${elementId} 
+    Element Should Be Visible  css=dl#${elementId}
     Element Should Not Be Visible  css=dl#${elementId} dd.actionMenuContent
     Click link  css=dl#${elementId} dt.actionMenuHeader a
     Wait until keyword succeeds  5s  1s  Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
