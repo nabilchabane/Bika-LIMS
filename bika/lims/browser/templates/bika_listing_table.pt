@@ -76,11 +76,12 @@ directly above the table element Some of the javascript relies on this to
 distinguish between data for pages with multiple editable tables.
 XXX This should use form_id </tal:comment>
 
-<input type="hidden"
+<!-- <input type="hidden"
 	name="specs"
 	tal:omit-tag="python:table_only"
 	tal:attributes="value python:hasattr(view.bika_listing, 'json_specs') and
 								view.bika_listing.json_specs or []"/>
+-->
 <input type="hidden"
 	id="item_data"
 	tal:omit-tag="python:table_only"

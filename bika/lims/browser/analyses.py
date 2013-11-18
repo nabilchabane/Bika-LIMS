@@ -62,6 +62,8 @@ class AnalysesView(BikaListingView):
                        'input_width': '6',
                        'input_class': 'ajax_calculate numeric',
                        'sortable': False},
+            'Specification': {'title': _('Specification'),
+                       'sortable': False},
             'ResultDM': {'title': _('Dry'),
                          'sortable': False},
             'Uncertainty': {'title': _('+-'),
@@ -88,6 +90,7 @@ class AnalysesView(BikaListingView):
                          'Partition',
                          'Method',
                          'Result',
+                         'Specification',
                          'Uncertainty',
                          'CaptureDate',
                          'DueDate',
@@ -139,7 +142,7 @@ class AnalysesView(BikaListingView):
 
         self.interim_fields = {}
         self.interim_columns = {}
-        self.specs = {}
+        # self.specs = {}
         for i, item in enumerate(items):
             # self.contentsMethod may return brains or objects.
             obj = hasattr(items[i]['obj'], 'getObject') and \
@@ -192,58 +195,58 @@ class AnalysesView(BikaListingView):
             items[i]['CaptureDate'] = cd and self.ulocalized_time(cd, long_format=1) or ''
             items[i]['Attachments'] = ''
 
-            # calculate specs
-            if obj.portal_type == 'ReferenceAnalysis':
-                items[i]['st_uid'] = obj.aq_parent.UID()
-            elif obj.portal_type == 'DuplicateAnalysis' and \
-                obj.getAnalysis().portal_type == 'ReferenceAnalysis':
-                items[i]['st_uid'] = obj.aq_parent.UID()
-            else:
-                if self.context.portal_type == 'AnalysisRequest':
-                    sample = self.context.getSample()
-                    st_uid = sample.getSampleType().UID()
-                    items[i]['st_uid'] = st_uid
-                    if st_uid not in self.specs:
-                        proxies = bsc(portal_type = 'AnalysisSpec',
-                                      getSampleTypeUID = st_uid)
-                elif self.context.portal_type == "Worksheet":
-                    if obj.portal_type == "DuplicateAnalysis":
-                        sample = obj.getAnalysis().getSample()
-                    else:
-                        sample = obj.aq_parent.getSample()
-                    st_uid = sample.getSampleType().UID()
-                    items[i]['st_uid'] = st_uid
-                    if st_uid not in self.specs:
-                        proxies = bsc(portal_type = 'AnalysisSpec',
-                                      getSampleTypeUID = st_uid)
-                elif self.context.portal_type == 'Sample':
-                    st_uid = self.context.getSampleType().UID()
-                    items[i]['st_uid'] = st_uid
-                    if st_uid not in self.specs:
-                        proxies = bsc(portal_type = 'AnalysisSpec',
-                                      getSampleTypeUID = st_uid)
-                else:
-                    proxies = []
-                if st_uid not in self.specs:
-                    for spec in (p.getObject() for p in proxies):
-                        client_or_lab = ""
-                        if spec.getClientUID() == obj.getClientUID():
-                            client_or_lab = 'client'
-                        elif spec.getClientUID() == self.context.bika_setup.bika_analysisspecs.UID():
-                            client_or_lab = 'lab'
-                        else:
-                            continue
-                        for keyword, results_range in \
-                            spec.getResultsRangeDict().items():
-                            # hidden form field 'specs' keyed by sampletype uid:
-                            # {st_uid: {'lab/client':{keyword:{min,max,error}}}}
-                            if st_uid in self.specs:
-                                if client_or_lab in self.specs[st_uid]:
-                                    self.specs[st_uid][client_or_lab][keyword] = results_range
-                                else:
-                                    self.specs[st_uid][client_or_lab] = {keyword: results_range}
-                            else:
-                                self.specs[st_uid] = {client_or_lab: {keyword: results_range}}
+            # # calculate specs
+            # if obj.portal_type == 'ReferenceAnalysis':
+            #     items[i]['st_uid'] = obj.aq_parent.UID()
+            # elif obj.portal_type == 'DuplicateAnalysis' and \
+            #     obj.getAnalysis().portal_type == 'ReferenceAnalysis':
+            #     items[i]['st_uid'] = obj.aq_parent.UID()
+            # else:
+            #     if self.context.portal_type == 'AnalysisRequest':
+            #         sample = self.context.getSample()
+            #         st_uid = sample.getSampleType().UID()
+            #         items[i]['st_uid'] = st_uid
+            #         if st_uid not in self.specs:
+            #             proxies = bsc(portal_type = 'AnalysisSpec',
+            #                           getSampleTypeUID = st_uid)
+            #     elif self.context.portal_type == "Worksheet":
+            #         if obj.portal_type == "DuplicateAnalysis":
+            #             sample = obj.getAnalysis().getSample()
+            #         else:
+            #             sample = obj.aq_parent.getSample()
+            #         st_uid = sample.getSampleType().UID()
+            #         items[i]['st_uid'] = st_uid
+            #         if st_uid not in self.specs:
+            #             proxies = bsc(portal_type = 'AnalysisSpec',
+            #                           getSampleTypeUID = st_uid)
+            #     elif self.context.portal_type == 'Sample':
+            #         st_uid = self.context.getSampleType().UID()
+            #         items[i]['st_uid'] = st_uid
+            #         if st_uid not in self.specs:
+            #             proxies = bsc(portal_type = 'AnalysisSpec',
+            #                           getSampleTypeUID = st_uid)
+            #     else:
+            #         proxies = []
+            #     if st_uid not in self.specs:
+            #         for spec in (p.getObject() for p in proxies):
+            #             client_or_lab = ""
+            #             if spec.getClientUID() == obj.getClientUID():
+            #                 client_or_lab = 'client'
+            #             elif spec.getClientUID() == self.context.bika_setup.bika_analysisspecs.UID():
+            #                 client_or_lab = 'lab'
+            #             else:
+            #                 continue
+            #             for keyword, results_range in \
+            #                 spec.getResultsRangeDict().items():
+            #                 # hidden form field 'specs' keyed by sampletype uid:
+            #                 # {st_uid: {'lab/client':{keyword:{min,max,error}}}}
+            #                 if st_uid in self.specs:
+            #                     if client_or_lab in self.specs[st_uid]:
+            #                         self.specs[st_uid][client_or_lab][keyword] = results_range
+            #                     else:
+            #                         self.specs[st_uid][client_or_lab] = {keyword: results_range}
+            #                 else:
+            #                     self.specs[st_uid] = {client_or_lab: {keyword: results_range}}
 
             method = service.getMethod()
             items[i]['Method'] = method and method.Title() or ''
@@ -320,7 +323,7 @@ class AnalysesView(BikaListingView):
                 if result != '':
                     if 'Result' in items[i]['choices'] and items[i]['choices']['Result']:
                         items[i]['formatted_result'] = \
-                            [r['ResultText'] for r in items[i]['choices']['Result'] \
+                            [r['ResultText'] for r in items[i]['choices']['Result']
                                               if str(r['ResultValue']) == str(result)][0]
                     else:
                         try:
@@ -346,9 +349,20 @@ class AnalysesView(BikaListingView):
                             #         (self.portal_url)
                 items[i]['Uncertainty'] = obj.getUncertainty(result)
 
+                spec = obj.specification if hasattr(obj, "specification") \
+                    else {}
+                min_val = spec.get('min', '')
+                min_str = ">{0}".format(min_val) if min_val else ''
+                max_val = spec.get('max', '')
+                max_str = "<{0}".format(max_val) if max_val else ''
+                error_val = spec.get('error', '')
+                error_str = "{0}%".format(error_val) if error_val else ''
+                rngstr = ",".join([x for x in [min_str, max_str, error_str] if x])
+                items[i]['Specification'] = rngstr
+
                 for name, adapter in getAdapters((obj, ), IFieldIcons):
                     auid = obj.UID()
-                    alerts = adapter()
+                    alerts = adapter(specification=None)
                     if alerts:
                         if auid in self.field_icons:
                             self.field_icons[auid].extend(alerts[auid])
@@ -429,8 +443,7 @@ class AnalysesView(BikaListingView):
                              "<a href='%s'><img src='++resource++bika.lims.images/worksheet.png' title='%s'/></a>" % \
                              (ws.absolute_url(), self.context.translate(
                                  _("Assigned to: ${worksheet_id}",
-                                   mapping={'worksheet_id':ws.id})))
-
+                                   mapping={'worksheet_id': ws.id})))
 
         # the TAL requires values for all interim fields on all
         # items, so we set blank values in unused cells
@@ -498,7 +511,7 @@ class AnalysesView(BikaListingView):
                 new_states.append(state)
             self.review_states = new_states
 
-        self.json_specs = json.dumps(self.specs)
+        # self.json_specs = json.dumps(self.specs)
         self.json_interim_fields = json.dumps(self.interim_fields)
         self.items = items
 

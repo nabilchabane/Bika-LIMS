@@ -49,8 +49,15 @@ class doPublish(BrowserView):
         adapters trigger a result.
         """
         adapters = getAdapters((analysis, ), IFieldIcons)
+        bsc = getToolByName(self.context, "bika_setup_catalog")
         for name, adapter in adapters:
-            alerts = adapter()
+            spec = {}
+            spec_uid = self.request.get("PublicationSpecification", None)
+            proxies = bsc(portal_type="AnalysisSpec", UID=spec_uid)
+            kw = analysis.getService().getKeyword()
+            spec = proxies[0].getObject().getResultsRangeDict().get(kw, None) \
+                if proxies else None
+            alerts = adapter(specification=spec)
             if alerts and analysis.UID() in alerts:
                 return True
 

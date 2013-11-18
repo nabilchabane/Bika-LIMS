@@ -120,11 +120,15 @@ class ResultOutOfRange(object):
         except ValueError:
             return {}
 
-        # No specs available, assume in range:
-        if not hasattr(self.context, "specification") \
-        or not self.context.specification:
+        spec = {}
+        if hasattr(self.context, "specification") and self.context.specification:
+            spec = self.context.specification
+        if 'specification' in kwargs:
+            spec = kwargs['specification']
+        if not spec:
+            # No specs available, assume in range:
             return {}
-        spec = self.context.specification
+
         outofrange, acceptable = isOutOfRange(result,
                                               spec.get('min', ''),
                                               spec.get('max', ''),

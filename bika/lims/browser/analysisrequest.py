@@ -60,7 +60,6 @@ import plone
 import urllib
 import zope.event
 
-
 class AnalysisRequestWorkflowAction(WorkflowAction):
     """Workflow actions taken in AnalysisRequest context.
 
@@ -2606,6 +2605,7 @@ class WidgetVisibility(_WV):
                 'SamplingDate',
                 'SampleType',
                 'Specification',
+                'PublicationSpecification',
                 'SamplePoint',
                 'ClientOrderNumber',
                 'ClientReference',
