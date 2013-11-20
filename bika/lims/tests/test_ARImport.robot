@@ -54,6 +54,7 @@ Import Classic AR File with errors
     Page Should Contain         Client ID should be
     Page Should Contain         Contact invalid
     Page Should Contain         Sample type WrongType invalid
+    Page Should Contain         Container type WrongContainer invalid
 
 Import Classic Valid AR
     Go to                       http://localhost:55001/plone/clients/client-1
@@ -91,6 +92,7 @@ Import Profile AR File with errors
     Page Should Contain         Client ID should be
     Page Should Contain         Contact invalid
     Page Should Contain         Sample type WrongType invalid
+    Page Should Contain         Container type WrongContainer invalid
 
 
 Submit Valid AR Import
