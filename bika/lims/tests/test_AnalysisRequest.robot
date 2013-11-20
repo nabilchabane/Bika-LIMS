@@ -17,8 +17,10 @@ ${ar_factory_url}  portal_factory/AnalysisRequest/Request new analyses/ar_add
 *** Test Cases ***
 
 Analysis Request with no samping or preservation workflow
+    Log in                    test_labmanager1    test_labmanager1
     Go to                     ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=1
     ${ar_id}=                 Complete ar_add form with template Borehole 12 Hardness
+    Check Sample Category exists ${ar_id}
 
     Go to                     ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=1
     ${ar_id}=                 Complete ar_add form without template
@@ -30,6 +32,7 @@ Analysis Request with no samping or preservation workflow
     Go to                     ${PLONEURL}/clients/client-1/${ar_id}/manage_results
     Submit results with out of range tests
     Log out
+
     Log in                    test_labmanager1    test_labmanager1
     Add new Copper analysis to ${ar_id}
     ${ar_id} state should be sample_received
@@ -49,6 +52,7 @@ Check that the Contact CC auto-fills correctly when a contact is selected
     Xpath Should Match X Times          //div[@class='reference_multi_item']    1
     Select from dropdown                ar_0_Contact            Neil
     Xpath Should Match X Times          //div[@class='reference_multi_item']    2
+
 
 
 # XXX Automatic expanded categories
@@ -81,8 +85,8 @@ Complete ar_add form with template ${template}
     Set Selenium Timeout        10
     ${ar_id} =                  Get text      //dl[contains(@class, 'portalMessage')][2]/dd
     ${ar_id} =                  Set Variable  ${ar_id.split()[2]}
-    Page should contain        Sample Category
-    Page should contain        Clinical
+    Page should contain         Sample Category
+    Page should contain         Clinical
     [return]                    ${ar_id}
 
 Complete ar_add form Without template
@@ -91,7 +95,7 @@ Complete ar_add form Without template
     SelectDate                 ar_0_SamplingDate   @{time}[2]
     Select From Dropdown       ar_0_SampleType    Water
     Select From Dropdown       ar_0_SampleCategory  Food
-    #Set Selenium Timeout       30
+    Set Selenium Timeout       30
     Click Element              xpath=//th[@id='cat_lab_Water Chemistry']
     Select Checkbox            xpath=//input[@title='Moisture' and @name='ar.0.Analyses:list:ignore_empty:record']
     Click Element              xpath=//th[@id='cat_lab_Metals']
@@ -102,10 +106,10 @@ Complete ar_add form Without template
     Select Checkbox            xpath=//input[@title='Ecoli' and @name='ar.0.Analyses:list:ignore_empty:record']
     Select Checkbox            xpath=//input[@title='Enterococcus' and @name='ar.0.Analyses:list:ignore_empty:record']
     Select Checkbox            xpath=//input[@title='Salmonella' and @name='ar.0.Analyses:list:ignore_empty:record']
-    #Set Selenium Timeout       30
+    Set Selenium Timeout       30
     Click Button               Save
     Wait until page contains   created
-    #Set Selenium Timeout       10
+    Set Selenium Timeout       10
     ${ar_id} =                 Get text      //dl[contains(@class, 'portalMessage')][2]/dd
     ${ar_id} =                 Set Variable  ${ar_id.split()[2]}
     Page should contain        Sample Category
@@ -174,3 +178,15 @@ TestSampleState
     ${VALUE}  Get Value  ${locator}
     Should Be Equal  ${VALUE}  ${expectedState}  ${sample} Workflow States incorrect: Expected: ${expectedState} -
     # Log  Testing Sample State for ${sample}: ${expectedState} -:- ${VALUE}  WARN
+
+Check Sample Category exists ${ar_id}
+    Go to                     ${PLONEURL}/clients/client-1/${ar_id}
+    Page should contain     Clinical
+
+    Go to                     ${PLONEURL}/samples
+    Page should contain     Sample Category
+    Page should contain     Clinical
+
+    Go to                     ${PLONEURL}/analysisrequests
+    Page should contain     Sample Category
+    Page should contain     Clinical
