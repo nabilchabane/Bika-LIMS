@@ -134,7 +134,6 @@ Submit results
     Wait Until Page Contains   Changes saved.
 
 Add new ${service} analysis to ${ar_id}
-    Set Selenium Speed         10
     Go to                      ${PLONEURL}/clients/client-1/${ar_id}/analyses
     select checkbox            xpath=//input[@alt='Select ${service}']
     click element              save_analyses_button_transition
