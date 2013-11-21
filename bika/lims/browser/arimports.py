@@ -55,7 +55,7 @@ class ARImportView(BrowserView):
         wftool = getToolByName(self, 'portal_workflow')
         return wftool.getInfoFor(
                 self.context.aq_parent, 'review_state') == 'submitted'
-        
+
 
 class GlobalARImportsView(BikaListingView):
     implements(IViewView)
@@ -158,7 +158,7 @@ class GlobalARImportsView(BikaListingView):
         for state in states:
             toggles.append(state)
         return toggles
-    
+
     def getAR(self):
         import pdb; pdb.set_trace()
 
@@ -211,7 +211,7 @@ class ClientARImportAddView(BrowserView):
         response = request.response
         form = request.form
         plone.protect.CheckAuthenticator(form)
-        if form.get('submitted'): 
+        if form.get('submitted'):
             csvfile = form.get('csvfile')
             option = form.get('ImportOption')
             client_id = form.get('ClientID')
@@ -223,7 +223,7 @@ class ClientARImportAddView(BrowserView):
                 IStatusMessage(request).addStatusMessage(_(msg), "warn")
                 request.response.redirect('%s/arimports' % (
                     self.context.absolute_url()))
-                return 
+                return
 
             if arimport:
                 msg = "AR Import complete"
@@ -231,12 +231,12 @@ class ClientARImportAddView(BrowserView):
                 request.response.write(
                     '<script>document.location.href="%s"</script>' % (
                         arimport.absolute_url()))
-                return 
+                return
             else:
                 IStatusMessage(request).addStatusMessage(_(msg), "error")
                 request.response.write(
                     '<script>document.location.href="%s/arimport_add"</script>' % (self.context.absolute_url()))
-                return 
+                return
         return self.template()
 
     def _import_file(self, importoption, csvfile, client_id):
@@ -260,7 +260,7 @@ class ClientARImportAddView(BrowserView):
         row_count = 0
         for row in reader:
             row_count = row_count + 1
-            if not row: 
+            if not row:
                 continue
             # a new batch starts
             if row_count == 1:
@@ -282,7 +282,7 @@ class ClientARImportAddView(BrowserView):
                             % (filename, row[2])
                     transaction_note(msg)
                     return None, msg
-                
+
                 batch_headers = row[0:]
                 arimport_id = tmpID()
                 title = filename
@@ -303,6 +303,10 @@ class ClientARImportAddView(BrowserView):
 
             #otherwise add to list of sample
             samples.append(row)
+        if not row_count:
+            msg = 'Invalid batch header'
+            transaction_note(msg)
+            return None, msg
 
         pad = 8192*' '
         request = self.request
@@ -342,7 +346,7 @@ class ClientARImportAddView(BrowserView):
                     ReportDryMatter = sample[6],
                     Priority = sample[7],
                     )
-            
+
                 aritem.setRemarks(item_remarks)
                 if importoption == 'c':
                     aritem.setAnalyses(analyses)
@@ -350,11 +354,14 @@ class ClientARImportAddView(BrowserView):
                     aritem.setAnalysisProfile(analyses)
 
         cc_names_report = ','.join(
-                [i.strip() for i in batch_headers[6].split(';')])
+                [i.strip() for i in batch_headers[6].split(';')]) \
+                if (batch_headers and len(batch_headers) > 7) else ""
         cc_emails_report = ','.join(
-                [i.strip() for i in batch_headers[7].split(';')])
+                [i.strip() for i in batch_headers[7].split(';')]) \
+                if batch_headers and len(batch_headers) > 8 else ""
         cc_emails_invoice = ','.join(
-                [i.strip() for i in batch_headers[8].split(';')])
+                [i.strip() for i in batch_headers[8].split(';')]) \
+                if batch_headers and len(batch_headers) > 9 else ""
 
         try:
             numOfSamples = int(batch_headers[12])
@@ -374,8 +381,8 @@ class ClientARImportAddView(BrowserView):
             QuoteID = batch_headers[10],
             SamplePoint = batch_headers[11],
             NumberSamples = numOfSamples,
-            Remarks = batch_remarks, 
-            Analyses = sample_headers, 
+            Remarks = batch_remarks,
+            Analyses = sample_headers,
             DateImported=DateTime(),
             )
         arimport._renameAfterCreation()
