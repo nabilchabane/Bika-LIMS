@@ -40,6 +40,7 @@ Start browser
 Import Classic AR File with invalid filename
     Go to                       http://localhost:55001/plone/clients/client-1
     Wait until page contains    Imports
+    ${PATH_TO_TEST} =           run keyword   resource_filename
     Import Classic ARImport     ${PATH_TO_TEST}/files/ARImportClassicInvalidFilename.csv
     Page Should Contain         Error
     Page Should Contain         does not match entered filename
