@@ -260,198 +260,132 @@ function toggleCat(poc, category_uid, column, selectedservices,
 }
 
 function calcdependencies(elements, auto_yes) {
-	// elements is a list of jquery checkbox objects
-	// it's got one element in it when a single checkbox was changed,
-	// and one from each column when a copy button was clicked.
-	var element = elements.shift();
-	if(auto_yes == undefined){ auto_yes = false ; }
-	var column = $(element).attr('column');
-	if (column == undefined || column == null) {
-		column = '0';
-	}
-	var remaining_columns = [];
-	for(var i = 0; i<elements.length; i++){
-		remaining_columns.push($(elements[i]).attr('column'));
-	}
+	/*jshint validthis:true */
+	auto_yes = auto_yes || false;
+	var _ = window.jarn.i18n.MessageFactory("bika");
 
-	service_uid = $(element).attr('id');
-	service_data = window.bika_utils.data.services[service_uid];
-	if (service_data == undefined || service_data == null){
-		// if service_uid is not in bika_utils.data.services, there are no deps.
-		return;
-	}
-	deps = service_data['deps'];
-	backrefs = service_data['backrefs'];
+	var dep;
+	var dep_i, cb;
 
-	if ($(element).prop('checked') == true){
-		// selecting a service; discover services it depends on.
-		var affected_services = [];
-		var affected_titles = [];
-		// actions are discovered and stored in dep_args, until confirmation dialog->Yes.
-		var dep_args = [];
-		if (deps == undefined || deps == null) {
-			pocdata = [];
-		} else {
-			pocdata = deps;
-		}
-		$.each(pocdata, function(pocid_poctitle, catdata){
-			var poc = pocid_poctitle.split("_");
-			$.each(catdata, function(catid_cattitle, servicedata){
-				var cat = catid_cattitle.split("_");
-				var services = [];
-				$.each(servicedata, function(i, serviceuid_servicetitle){
-					service = serviceuid_servicetitle.split("_");
-					// if the service is already checked, skip it.
-					if (! $("input[column='"+column+"']").filter('#'+service[0]).prop('checked') ){
-						// this one is for the current category
-						services.push(service[0]);
-						// and this one decides if the confirmation box gets shown at all.
-						affected_services.push(service[0]);
-						// this one is for the pretty message box.
-						affected_titles.push(service[1] + " ("+cat[1]+")");
-					}
-				});
-				// we want to confirm, then process these all at once
-				if(services.length > 0){
-					dep_args.push([poc[0], cat[0], column, services]);
+	var lims = window.bika.lims;
+
+	for(var elements_i = 0; elements_i < elements.length; elements_i++){
+		var dep_services = [];  // actionable services
+		var dep_titles = [];
+		var element = elements[elements_i];
+		var column = $(element).attr("column");
+		var service_uid = $(element).attr("id");
+		var modified_cols = [];
+		// selecting a service; discover dependencies
+		if ($(element).prop("checked")){
+			var Dependencies = lims.AnalysisService.Dependencies(service_uid);
+			for(dep_i = 0; dep_i<Dependencies.length; dep_i++) {
+				dep = Dependencies[dep_i];
+				if ($("input[column='"+column+"']").filter("#"+dep.Service_uid).prop("checked")){
+					continue; // skip if checked already
 				}
-			});
-		});
+				dep_services.push(dep);
+				dep_titles.push(dep.Service);
+			}
 
-		if (affected_services.length > 0) {
-			$("body").append(
-				"<div id='messagebox' style='display:none' title='" + _("Service dependencies") + "'>"+
-				_("<p>${service} requires the following services to be selected:</p><br/><p>${deps}</p><br/><p>Do you want to apply these selections now?</p>",
-					{service:$(element).attr('title'),
-					 deps: affected_titles.join("<br/>")})+"</div>");
-				function add_Yes(){
-					$.each(dep_args, function(i,args){
-						tbody = $("#"+args[0]+"_"+args[1]);
-						if ($(tbody).hasClass("expanded")) {
-							// if cat is already expanded, we toggle(true) it and manually select service checkboxes
-							$(tbody).toggle(true);
-							$.each(args[3], function(x,serviceUID){
-								$('input[column="'+args[2]+'"]').filter('#'+serviceUID).prop('checked', true);
-								// if elements from more than one column were passed, set all columns to be the same.
-								for(col in remaining_columns){
-									$('input[column="'+remaining_columns[col]+'"]').filter('#'+serviceUID).prop('checked', true);
-								}
-							});
-						} else {
-							// otherwise, toggleCat will take care of everything for us
-							jQuery.ajaxSetup({async:false});
-							toggleCat(args[0], args[1], args[2], args[3]);
-							jQuery.ajaxSetup({async:true});
+			if (dep_services.length > 0) {
+				if(!modified_cols[column]){
+					modified_cols.push(column);
+				}
+				if (auto_yes) {
+					add_Yes(this, element, dep_services);
+				} else {
+					var html = "<div id='messagebox' style='display:none' title='" + _("Service dependencies") + "'>";
+					html = html + _("<p>${service} requires the following services to be selected:</p>"+
+													"<br/><p>${deps}</p><br/><p>Do you want to apply these selections now?</p>",
+													{
+														service: $(element).attr("title"),
+														deps: dep_titles.join("<br/>")
+													});
+					html = html + "</div>";
+					$("body").append(html);
+					$("#messagebox").dialog({
+						width:450,
+						resizable:false,
+						closeOnEscape: false,
+						buttons:{
+							yes: function(){
+								add_Yes(this, element, dep_services);
+							},
+							no: function(){
+								add_No(this, element);
+							}
 						}
 					});
-					recalc_prices();
-					calculate_parts(column);
-					for(col in remaining_columns){
-						calculate_parts(column);
-					}
-					$(this).dialog("close");
-					$('#messagebox').remove();
 				}
-				function add_No(){
-					$(element).prop('checked', false);
-					recalc_prices();
-					for(col in remaining_columns){
-						e = $('input[column="'+remaining_columns[col]+'"]')
-								.filter('#'+serviceUID);
-						$(e).prop('checked', false);
-					}
-					recalc_prices(column);
-					calculate_parts(column);
-					for(col in remaining_columns){
-						calculate_parts(column);
-					}
-					$(this).dialog("close");
-					$('#messagebox').remove();
-				}
-			if (auto_yes) {
-				$('#messagebox').remove();
-				add_Yes();
-			} else {
-				yes = _("Yes");
-				no = _("No");
-				$("#messagebox").dialog({width:450, resizable:false, closeOnEscape: false, buttons:{
-							yes: add_Yes,
-							no: add_No
-							}});
 			}
 		}
-	}
-	else {
 		// unselecting a service; discover back dependencies
-		var affected_titles = [];
-		var affected_services = [];
-		s_uids = backrefs;
-		if (s_uids == undefined || s_uids == null) {
-			s_uids = [];
-		}
-		if (s_uids.length > 0){
-			$.each(s_uids, function(i, serviceUID){
-				cb = $('input[column="'+column+'"]').filter('#'+serviceUID);
-				if (cb.prop('checked')){
-					affected_services.push(serviceUID);
-					affected_titles.push(cb.attr('title'));
+		else {
+			var Dependants = lims.AnalysisService.Dependants(service_uid);
+			if (Dependants.length > 0){
+				for (i=0; i<Dependants.length; i++){
+					dep = Dependants[i];
+					cb = $("input[column='"+column+"']").filter("#"+dep.Service_uid);
+					if (cb.prop("checked")){
+						dep_titles.push(dep.Service);
+						dep_services.push(dep);
+					}
 				}
-			});
-			$("body").append(
-				"<div id='messagebox' style='display:none' title='" + _("Service dependencies") + "'>"+
-				_("<p>The following services depend on ${service}, and will be unselected if you continue:</p><br/><p>${deps}</p><br/><p>Do you want to remove these selections now?</p>",
-					{service:$(element).attr('title'),
-					 deps: affected_titles.join("<br/>")})+"</div>");
-			yes = _("Yes");
-			no = _("No");
-			if (affected_services.length > 0) {
-				$("#messagebox").dialog({width:450, resizable:false, closeOnEscape: false, buttons:{
-					yes: function(){
-						for(as=0;as<affected_services.length;as++){
-							serviceUID = affected_services[as];
-							cb = $('input[column="'+column+'"]')
-								.filter('#'+serviceUID).prop('checked', false);
-							$(".partnr_"+serviceUID).filter('[column="'+column + '"]')
-								.empty();
+				if(dep_services.length > 0){
+					if (auto_yes) {
+						for(dep_i=0; dep_i<dep_services.length; dep_i+=1) {
+							dep = dep_services[dep_i];
+							service_uid = dep.Service_uid;
+							cb = $("input[column='"+column+"']").filter("#"+service_uid);
+							$(cb).prop("checked", false);
+							toggle_spec_fields($(cb));
+							$(".partnr_"+service_uid).filter("[column='"+column+"']").empty();
 							if ($(cb).val() == $("#getDryMatterService").val()) {
-								$("#ar_"+column+"_ReportDryMatter").prop('checked', false);
+								$("#ar_"+column+"_ReportDryMatter").prop("checked",false);
 							}
-							// if elements from more than one column were passed, set all columns to be the same.
-							for(col in remaining_columns){
-								cb = $('input[column="'+remaining_columns[col]+'"]')
-									.filter('#'+serviceUID).prop('checked', false);
-								$(".partnr_"+serviceUID).filter('[column="'+col + '"]')
-									.empty();
-								if ($(cb).val() == $("#getDryMatterService").val()) {
-									$("#ar_"+col+"_ReportDryMatter").prop('checked', false);
+						}
+					} else {
+						$("body").append(
+							"<div id='messagebox' style='display:none' title='" + _("Service dependencies") + "'>"+
+							_("<p>The following services depend on ${service}, and will be unselected if you continue:</p><br/><p>${deps}</p><br/><p>Do you want to remove these selections now?</p>",
+								{service:$(element).attr("title"),
+								deps: dep_titles.join("<br/>")})+"</div>");
+						$("#messagebox").dialog({
+							width:450,
+							resizable:false,
+							closeOnEscape: false,
+							buttons:{
+								Yes: function(){
+									for(dep_i=0; dep_i<dep_services.length; dep_i+=1) {
+										dep = dep_services[dep_i];
+										service_uid = dep.Service_uid;
+										cb = $("input[column='"+column+"']").filter("#"+service_uid);
+										$(cb).prop("checked", false);
+										toggle_spec_fields($(cb));
+										$(".partnr_"+service_uid).filter("[column='"+column+"']").empty();
+										if ($(cb).val() == $("#getDryMatterService").val()) {
+											$("#ar_"+column+"_ReportDryMatter").prop("checked",false);
+										}
+									}
+									$(this).dialog("close");
+									$("#messagebox").remove();
+								},
+								No:function(){
+									$(element).prop("checked",true);
+									toggle_spec_fields($(element));
+									$(this).dialog("close");
+									$("#messagebox").remove();
 								}
 							}
-						};
-						recalc_prices();
-						calculate_parts(column);
-						for(col in remaining_columns){
-							calculate_parts(column);
-						}
-						$(this).dialog("close");
-						$('#messagebox').remove();
-					},
-					no:function(){
-						$(element).prop('checked', true);
-						for(col in remaining_columns){
-							$('input[column="'+remaining_columns[col]+'"]').filter('#'+serviceUID).prop('checked', true);
-						}
-						recalc_prices(column);
-						$(this).dialog("close");
-						calculate_parts(column);
-						for(col in remaining_columns){
-							calculate_parts(column);
-						}
-						$('#messagebox').remove();
+						});
 					}
-				}});
-			} else {
-				$('#messagebox').remove();
+				}
 			}
+		}
+		recalc_prices();
+		for(var i=0; i<modified_cols.length; i+=1){
+			calculate_parts(modified_cols[i]);
 		}
 	}
 }

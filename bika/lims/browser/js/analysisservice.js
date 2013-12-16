@@ -1,5 +1,34 @@
 (function( $ ) {
 
+window.bika.lims.AnalysisService = window.bika.lims.AnalysisService || {
+	Dependants: function(service_uid){
+		var request_data = {
+			catalog_name: "bika_setup_catalog",
+			UID: service_uid
+		};
+		var deps = {};
+		$.ajaxSetup({async:false});
+		window.bika.lims.jsonapi_read(request_data, function(data){
+			deps = data.objects[0].ServiceDependants;
+		});
+		$.ajaxSetup({async:true});
+		return deps;
+	},
+	Dependencies: function(service_uid){
+		var request_data = {
+			catalog_name: "bika_setup_catalog",
+			UID: service_uid
+		};
+		var deps = {};
+		$.ajaxSetup({async:false});
+		window.bika.lims.jsonapi_read(request_data, function(data){
+			deps = data.objects[0].ServiceDependencies;
+		});
+		$.ajaxSetup({async:true});
+		return deps;
+	}
+};
+
 	$(document).ready(function(){
 
 		_ = jarn.i18n.MessageFactory('bika');
@@ -182,9 +211,9 @@
 
 			container = containers[selection];
 			if(container!=null
-			   && container!=undefined
-			   && container.prepreserved
-			   && container.preservation){
+				 && container!=undefined
+				 && container.prepreserved
+				 && container.preservation){
 					$(target).val(container.preservation);
 					$(target).prop('disabled', true);
 			} else {
