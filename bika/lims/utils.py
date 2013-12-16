@@ -462,3 +462,7 @@ class bika_browserdata(BrowserView):
         data['prefixes'] = dict([(p['portal_type'], p['prefix']) for p in self.context.bika_setup.getPrefixes()])
 
         return json.dumps(data)
+
+def tmpID():
+    import os, binascii
+    return binascii.hexlify(os.urandom(16))

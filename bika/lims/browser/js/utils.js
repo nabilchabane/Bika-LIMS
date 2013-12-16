@@ -1,7 +1,33 @@
-jarn.i18n.loadCatalog('bika');
-jarn.i18n.loadCatalog('plone');
+jarn.i18n.loadCatalog("bika");
+jarn.i18n.loadCatalog("plone");
 
 (function( $ ) {
+
+window.bika = window.bika || {
+	lims: {}
+};
+
+window.bika.lims.jsonapi_cache = {};
+window.bika.lims.jsonapi_read = function(request_data, handler) {
+	window.bika.lims.jsonapi_cache = window.bika.lims.jsonapi_cache || {};
+	var jsonapi_cacheKey = $.param(request_data);
+	var jsonapi_read_handler = handler;
+	if (window.bika.lims.jsonapi_cache[jsonapi_cacheKey] === undefined){
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: window.portal_url + "/@@API/read",
+			data: request_data,
+			success: function(data) {
+				window.bika.lims.jsonapi_cache[jsonapi_cacheKey] = data;
+				jsonapi_read_handler(data);
+			}
+		});
+	} else {
+		jsonapi_read_handler(window.bika.lims.jsonapi_cache[jsonapi_cacheKey]);
+	}
+};
+
 
 function portalMessage(message) {
 	_ = jarn.i18n.MessageFactory('bika');

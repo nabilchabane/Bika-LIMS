@@ -83,5 +83,6 @@
 
 <permission id="bika.lims.ManageLoginDetails" title="BIKA: Manage Login Details"/>
 
+<permission id="bika.lims.AccessJSONAPI" title="BIKA: Access JSON API"/>
 
 </configure>

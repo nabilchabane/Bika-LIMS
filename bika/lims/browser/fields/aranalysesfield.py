@@ -48,7 +48,7 @@ class ARAnalysesField(ObjectField):
         return analyses
 
     security.declarePrivate('set')
-    def set(self, instance, service_uids, prices = None, **kwargs):
+    def set(self, instance, service_uids, prices = {}, **kwargs):
         """ service_uids are the services selected on the AR Add/Edit form.
             prices is a service_uid keyed dictionary containing the prices entered on the form.
         """
@@ -75,7 +75,7 @@ class ARAnalysesField(ObjectField):
             service_uid = service.UID
             service = service.getObject()
             keyword = service.getKeyword()
-            price = prices[service_uid]
+            price = prices.get(service_uid, service.getPrice())
             vat = Decimal(service.getVAT())
 
             # analysis->InterimFields

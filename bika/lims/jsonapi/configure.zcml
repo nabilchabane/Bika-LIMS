@@ -1,0 +1,39 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="bika">
+
+  <monkey:patch
+      description="Better jsonapi error handler."
+      module="plone.jsonapi.browser.decorators"
+      original="handle_errors"
+      replacement="bika.lims.jsonapi.handle_errors"
+      />
+
+  <utility
+    name="bika.lims.jsonapi.create"
+    provides="plone.jsonapi.interfaces.IRouteProvider"
+    factory=".create.Create" />
+
+  <utility
+    name="bika.lims.jsonapi.read"
+    provides="plone.jsonapi.interfaces.IRouteProvider"
+    factory=".read.Read" />
+
+  <utility
+    name="bika.lims.jsonapi.update"
+    provides="plone.jsonapi.interfaces.IRouteProvider"
+    factory=".update.Update" />
+
+  <utility
+    name="bika.lims.jsonapi.doactionfor"
+    provides="plone.jsonapi.interfaces.IRouteProvider"
+    factory=".doactionfor.doActionFor" />
+
+  <utility
+    name="bika.lims.jsonapi.calculate_partitions"
+    provides="plone.jsonapi.interfaces.IRouteProvider"
+    factory=".calculate_partitions.calculate_partitions" />
+
+</configure>

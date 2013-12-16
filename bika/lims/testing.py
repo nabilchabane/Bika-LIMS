@@ -14,6 +14,9 @@ from plone.testing import z2
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.setuphandlers import setupPortalContent
 from Testing.makerequest import makerequest
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from plone.testing.z2 import Browser
 
 import Products.ATExtensions
 import Products.PloneTestCase.setup
@@ -98,7 +101,23 @@ class BikaTestLayer(PloneSandboxLayer):
 
         logout()
 
+
+def getBrowser(portal, loggedIn=True):
+    """Instantiate and return a testbrowser for convenience
+This is done weirdly because I could not figure out how else to
+pass the browser to the doctests"""
+    browser = Browser(portal)
+    browser.handleErrors = False
+    if loggedIn:
+        browser.open(portal.absolute_url())
+        browser.getControl('Login Name').value = TEST_USER_NAME
+        browser.getControl('Password').value = TEST_USER_PASSWORD
+        browser.getControl('Log in').click()
+        assert('You are now logged in' in browser.contents)
+    return browser
+
 BIKA_TEST_FIXTURE = BikaTestLayer()
+BIKA_TEST_FIXTURE['getBrowser'] = getBrowser
 
 BIKA_INTEGRATION_TESTING = IntegrationTesting(
     bases=(BIKA_TEST_FIXTURE,),
