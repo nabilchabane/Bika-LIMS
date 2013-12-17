@@ -175,7 +175,7 @@ function copyButton(){
 				disabled = false;
 			}
 			if (!disabled && !(other_elem.prop('checked')==first_val)) {
-				other_elem.prop('checked') = first_val?true:false;
+				other_elem.prop('checked', first_val?true:false);
 				affected_elements.push(other_elem);
 			}
 			calculate_parts(col);
@@ -190,7 +190,7 @@ function copyButton(){
 		for (col=1; col<parseInt($("#col_count").val()); col++) {
 			other_elem = $('#ar_' + col + '_' + field_name);
 			if (!(other_elem.prop('checked')==first_val)) {
-				other_elem.prop('checked') = first_val?true:false;
+				other_elem.prop('checked', first_val?true:false);
 			}
 		}
 		$("[id*='_" + field_name + "']").change();
@@ -257,6 +257,65 @@ function toggleCat(poc, category_uid, column, selectedservices,
 			}
 		);
 	}
+}
+function add_Yes(dlg, element, dep_services){
+	/*jshint validthis:true */
+	var column = $(element).attr("column");
+	var key, json_key, dep, i;
+	var keyed_deps = {};
+	for(i = 0; i<dep_services.length; i++){
+		dep = dep_services[i];
+		key = {
+			col: column,
+			poc: dep.PointOfCapture,
+			cat_uid: dep.Category_uid
+		};
+		json_key = $.toJSON(key);
+		if(!keyed_deps[json_key]){
+			keyed_deps[json_key] = [];
+		}
+		keyed_deps[json_key].push(dep.Service_uid);
+	}
+
+	var modified_cols = [];
+	for(json_key in keyed_deps){
+		if (!keyed_deps.hasOwnProperty(json_key)){ continue; }
+		key = $.parseJSON(json_key);
+		if(!modified_cols[key.col]){
+			modified_cols.push(key.col);
+		}
+		var service_uids = keyed_deps[json_key];
+		var tbody = $("#"+key.poc+"_"+key.cat_uid);
+		if($(tbody).hasClass("expanded")) {
+			// if cat is already expanded, manually select service checkboxes
+			$(tbody).toggle(true);
+			for(i=0; i<service_uids.length; i++){
+				var service_uid = service_uids[i];
+				var e = $("input[column='"+key.col+"']").filter("#"+service_uid);
+				$(e).prop("checked",true);
+			}
+		} else {
+			// otherwise, toggleCat will take care of everything for us
+			$.ajaxSetup({async:false});
+			toggleCat(key.poc, key.cat, dep.col, service_uids);
+			$.ajaxSetup({async:true});
+		}
+	}
+	recalc_prices();
+	for(i=0; i<modified_cols.length; i+=1){
+		calculate_parts(modified_cols[i]);
+	}
+	$(dlg).dialog("close");
+	$("#messagebox").remove();
+
+
+}
+
+function add_No(dlg, element){
+	/*jshint validthis:true */
+	$(element).prop("checked",false);
+	$(dlg).dialog("close");
+	$("#messagebox").remove();
 }
 
 function calcdependencies(elements, auto_yes) {
@@ -339,7 +398,6 @@ function calcdependencies(elements, auto_yes) {
 							service_uid = dep.Service_uid;
 							cb = $("input[column='"+column+"']").filter("#"+service_uid);
 							$(cb).prop("checked", false);
-							toggle_spec_fields($(cb));
 							$(".partnr_"+service_uid).filter("[column='"+column+"']").empty();
 							if ($(cb).val() == $("#getDryMatterService").val()) {
 								$("#ar_"+column+"_ReportDryMatter").prop("checked",false);
@@ -362,7 +420,6 @@ function calcdependencies(elements, auto_yes) {
 										service_uid = dep.Service_uid;
 										cb = $("input[column='"+column+"']").filter("#"+service_uid);
 										$(cb).prop("checked", false);
-										toggle_spec_fields($(cb));
 										$(".partnr_"+service_uid).filter("[column='"+column+"']").empty();
 										if ($(cb).val() == $("#getDryMatterService").val()) {
 											$("#ar_"+column+"_ReportDryMatter").prop("checked",false);
@@ -373,7 +430,6 @@ function calcdependencies(elements, auto_yes) {
 								},
 								No:function(){
 									$(element).prop("checked",true);
-									toggle_spec_fields($(element));
 									$(this).dialog("close");
 									$("#messagebox").remove();
 								}
@@ -390,80 +446,63 @@ function calcdependencies(elements, auto_yes) {
 	}
 }
 
-function calculate_parts(column){
+function calc_parts_handler(column, data){
+        // Set new part numbers in hidden form field
+        var formparts = $.parseJSON($("#parts").val());
+        var parts = data.parts;
+        formparts[column] = parts;
+        $("#parts").val($.toJSON(formparts));
+        // write new part numbers next to checkboxes
+        for(var p in parts) { if(!parts.hasOwnProperty(p)){ continue; }
+                for (var s in parts[p].services) {
+                        if (!parts[p].services.hasOwnProperty(s)) { continue; }
+                        $(".partnr_"+parts[p].services[s]).filter("[column='"+column+"']").empty().append(p+1);
+                }
+        }
+}
 
-//	console.log("===================================");
+function calculate_parts(column) {
+        // Template columns are not calculated
+        if ($("#ar_"+column+"_Template").val()){
+                return;
+        }
+        var st_title = $("#ar_"+column+"_SampleType").val();
+        sampletype = window.bika_utils.data.st_uids[st_title];
+        st_uid = sampletype.uid;
 
-	// ARTemplate columns are not calculated
-	if ($("#ar_"+column+"_ARTemplate").val() != ''){
-		return;
-	}
-
-	// gather up SampleType UID
-	var st_title = $("#ar_"+column+"_SampleType").val();
-	sampletype = window.bika_utils.data.st_uids[st_title];
-	if (sampletype != undefined && sampletype != null){
-		st_uid = sampletype['uid'];
-		st_minvol = sampletype['minvol'].split(" ")[0];
-		if(st_minvol.length == 0){
-			st_minvol = 0;
-		} else {
-			st_minvol = parseFloat(st_minvol, 10);
-		}
-	} else {
-		// all unchecked services have their part numbers removed
-		ep = $("[class^='partnr_']").filter("[column='"+column+"']").not(":empty");
-		for(i=0;i<ep.length;i++){
-			em = ep[i];
-			uid = $(ep[0]).attr('class').split("_")[1]
-			cb = $("#"+uid);
-			if ( ! $(cb).prop('checked') ){
-				$(em).empty();
-			}
-		}
-		return;
-	}
-//	console.log("Sampletype: "+st_uid);
-
-	// gather up selected service uids
-	var checked = $('[name^="ar\\.'+column+'\\.Analyses"]').filter(':checked');
-	service_uids = []
-	for(i=0;i<checked.length;i++){
-		e = checked[i];
-		var uid = $(e).attr('value');
-		service_uids.push(uid);
-	}
-
-	// skip everything if no selected services in this column
-	if (service_uids.length == 0){
-		// all unchecked services have their part numbers removed
-		ep = $("[class^='partnr_']").filter("[column='"+column+"']").not(":empty");
-		for(i=0;i<ep.length;i++){
-			em = ep[i];
-			uid = $(ep[0]).attr('class').split("_")[1]
-			cb = $("#"+uid);
-			if ( ! $(cb).prop('checked') ){
-				$(em).empty();
-			}
-		}
-		return;
-	}
-
-	parts = window.bika_utils.calculate_partitions(service_uids, st_uid, st_minvol);
-
-	// Set new part numbers in hidden form field
-	formparts = $.parseJSON($("#parts").val());
-	formparts[column] = parts
-	$("#parts").val($.toJSON(formparts));
-
-	// write new part numbers next to checkboxes
-	$.each(parts, function(p,part){
-		$.each(part['services'], function(s,service_uid){
-			$(".partnr_"+service_uid).filter("[column='"+column+"']")
-				.empty().append(p+1);
-		});
-	});
-
+        var checked = $("[name^='ar\\."+column+"\\.Analyses']").filter(":checked");
+        var service_uids = [];
+        for(var i=0;i<checked.length;i++){
+                var uid = $(checked[i]).attr("value");
+                service_uids.push(uid);
+        }
+        // if no sampletype or no selected analyses: remove partition markers
+        if (st_uid === "" || service_uids.length === 0) {
+                $("[class*='partnr_']").filter("[column='"+column+"']").empty();
+                return;
+        }
+        var request_data = {
+                        services: service_uids.join(","),
+                        sampletype: st_uid,
+                        _authenticator: $("input[name='_authenticator']").val()
+        };
+        window.jsonapi_cache = window.jsonapi_cache || {};
+        var cacheKey = $.param(request_data);
+        if (typeof window.jsonapi_cache[cacheKey] === "undefined") {
+                $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: window.portal_url + "/@@API/calculate_partitions",
+                        data: request_data,
+                        success: function(data) {
+                                window.jsonapi_cache[cacheKey] = data;
+                                calc_parts_handler(column, data);
+                        }
+                });
+        } else {
+                var data = window.jsonapi_cache[cacheKey];
+                calc_parts_handler(column, data);
+        }
 }
 
 function uncheck_partnrs(column){
