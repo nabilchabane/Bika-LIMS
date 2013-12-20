@@ -177,7 +177,13 @@
             <td tal:content="aritem/getClientRef">R1</td>
             <td tal:content="aritem/getClientSid">S1</td>
             <td tal:content="aritem/getSampleDate">Sampledate</td>
-            <td tal:content="aritem/getSampleType">SampleType</td>
+            <td tal:condition="aritem/getSampleType">
+                <a tal:attributes="href python:aritem.getSampleType().absolute_url() or ''"
+                   tal:content="python:aritem.getSampleType().Title() or ''">Type</a>
+            </td>
+            <td tal:condition="not:aritem/getSampleType">
+                Unknown
+            </td>
             <td tal:content="aritem/getPickingSlip">PickingSlip</td>
             <td tal:content="aritem/getContainerType">PickingSlip</td>
             <td tal:content="aritem/getReportDryMatter">ReportDM</td>

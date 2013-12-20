@@ -1,14 +1,15 @@
+import sys
+from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IARImportItem
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from AccessControl import ClassSecurityInfo
-from Products.CMFCore.permissions import View, \
-    ModifyPortalContent
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore import permissions
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
 
@@ -33,10 +34,25 @@ schema = BikaSchema.copy() + Schema((
             label = _("Client SID"),
         )
     ),
-    StringField('SampleType',
-        widget = StringWidget(
-            label = _("Sample Type"),
-        )
+    ReferenceField('SampleType',
+        required=1,
+        vocabulary_display_path_bound=sys.maxsize,
+        allowed_types=('SampleType',),
+        relationship='ARImportItemSampleType',
+        referenceClass=HoldingReference,
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Sample Type"),
+            render_own_label=False,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'visible'},
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+        ),
     ),
     StringField('SampleDate',
         widget = StringWidget(
@@ -113,5 +129,22 @@ class ARImportItem(BaseContent):
         """ Return the Product as title """
         return safe_unicode(self.getSampleName()).encode('utf-8')
 
+
+    # Sample Type strings need to be converted to objects
+    def setSampleType(self, value, **kw):
+        """ Accept Title or UID, and convert SampleType title to UID
+        before saving.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        sampletypes = bsc(portal_type='SampleType', title=value)
+        if sampletypes:
+            value = sampletypes[0].UID
+        else:
+            sampletypes = bsc(portal_type='SampleType', UID=value)
+            if sampletypes:
+                value = sampletypes[0].UID
+            else:
+                value = None
+        return self.Schema()['SampleType'].set(self, value)
 
 atapi.registerType(ARImportItem, PROJECTNAME)

@@ -325,7 +325,7 @@ class ARImport(BaseFolder):
 
             sampletypes = self.portal_catalog(
                 portal_type = 'SampleType',
-                sortable_title = aritem.getSampleType().lower(),
+                sortable_title = aritem.getSampleType().Title().lower(),
                 )
             if not sampletypes:
                 valid_batch = False
@@ -346,7 +346,7 @@ class ARImport(BaseFolder):
                 SampleID = sample_id,
                 ClientReference = aritem.getClientRef(),
                 ClientSampleID = aritem.getClientSid(),
-                SampleType = aritem.getSampleType(),
+                SampleType = aritem.getSampleType().Title(),
                 DateSampled = sample_date,
                 DateReceived = DateTime(),
                 )
@@ -810,7 +810,12 @@ class ARImport(BaseFolder):
             item_remarks = []
             valid_item = True
             #validate sample type
-            if aritem.getSampleType() not in sampletypes:
+            if not aritem.getSampleType():
+                batch_remarks.append('\n%s: Sample type invalid' %(
+                    aritem.getSampleName()))
+                item_remarks.append('\nSample type invalid')
+                valid_item = False
+            elif aritem.getSampleType().Title() not in sampletypes:
                 batch_remarks.append('\n%s: Sample type %s invalid' %(
                     aritem.getSampleName(), aritem.getSampleType()))
                 item_remarks.append(
