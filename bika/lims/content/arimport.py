@@ -3,7 +3,7 @@ import time
 import transaction
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets import DateTimeWidget
+from bika.lims.browser.widgets import DateTimeWidget, ReferenceWidget
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import ManageBika, PROJECTNAME, ARIMPORT_OPTIONS
 from bika.lims.idserver import renameAfterCreation
@@ -213,6 +213,7 @@ schema = BikaSchema.copy() + Schema((
     LinesField('Analyses',
         widget = LinesWidget(
             label = _("Analyses"),
+            visible = False,
         )
     ),
     ComputedField('ClientUID',
@@ -342,7 +343,7 @@ class ARImport(BaseFolder):
                 SampleID = sample_id,
                 ClientReference = aritem.getClientRef(),
                 ClientSampleID = aritem.getClientSid(),
-                SampleType = aritem.getSampleType().Title(),
+                SampleType = aritem.getSampleType(),
                 DateSampled = sample_date,
                 DateReceived = DateTime(),
                 )
@@ -374,6 +375,7 @@ class ARImport(BaseFolder):
                 CCEmails = self.getCCEmailsInvoice(),
                 ClientOrderNumber = self.getOrderID(),
                 ReportDryMatter = report_dry_matter,
+                SamplingDate = sample_date,
                 Analyses = analyses
                 )
             ar.setSample(sample_uid)
@@ -514,19 +516,16 @@ class ARImport(BaseFolder):
 
             sampletypes = self.portal_catalog(
                 portal_type = 'SampleType',
-                sortable_title = aritem.getSampleType().lower(),
+                sortable_title = aritem.getSampleType().Title().lower(),
                 )
             if not sampletypes:
                 valid_batch = False
                 return
             sampletypeuid = sampletypes[0].getObject().UID()
 
+            sample_date = None
             if aritem.getSampleDate():
-                date_items = aritem.getSampleDate().split('/')
-                sample_date = DateTime(
-                    int(date_items[2]), int(date_items[0]), int(date_items[1]))
-            else:
-                sample_date = None
+                sample_date = aritem.getSampleDate()
 
             sample_id = '%s-%s' % (prefix, tmpID())
             client.invokeFactory(id = sample_id, type_name = 'Sample')
@@ -897,7 +896,7 @@ class ARImport(BaseFolder):
                     batch_remarks.append('\n%s: Only one Profile allowed' \
                         % aritem.getSampleName())
                 else:
-                    if not self._findProfileKey(analyses[0]):
+                    if not self._findProfileKey(analyses[0].getProfileKey()):
                         valid_item = False
                         item_remarks.append('\n%s: unknown Profile %s' \
                             % (aritem.getSampleName(), analyses[0]))

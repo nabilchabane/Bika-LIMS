@@ -1,7 +1,7 @@
 import sys
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets.datetimewidget import DateTimeWidget
+from bika.lims.browser.widgets import DateTimeWidget, ReferenceWidget
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IARImportItem
