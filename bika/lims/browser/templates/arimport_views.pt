@@ -176,7 +176,7 @@
             </tal:submitted>
             <td tal:content="aritem/getClientRef">R1</td>
             <td tal:content="aritem/getClientSid">S1</td>
-            <td tal:content="aritem/getSampleDate">Sampledate</td>
+            <td tal:content="python:plone_view.toLocalizedTime(aritem.getSampleDate(), long_format=0)">Sampledate</td>
             <td tal:condition="aritem/getSampleType">
                 <a tal:attributes="href python:aritem.getSampleType().absolute_url() or ''"
                    tal:content="python:aritem.getSampleType().Title() or ''">Type</a>

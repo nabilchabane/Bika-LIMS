@@ -1,6 +1,7 @@
 import sys
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.widgets.datetimewidget import DateTimeWidget
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IARImportItem
@@ -54,10 +55,16 @@ schema = BikaSchema.copy() + Schema((
             showOn=True,
         ),
     ),
-    StringField('SampleDate',
-        widget = StringWidget(
-            label = _("Sample Date"),
-        )
+    DateTimeField('SampleDate',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget = DateTimeWidget(
+            label=_("Sample Date"),
+            visible={'edit': 'visible',
+                     'view': 'visible'},
+            render_own_label=True,
+        ),
     ),
     StringField('NoContainers',
         widget = StringWidget(

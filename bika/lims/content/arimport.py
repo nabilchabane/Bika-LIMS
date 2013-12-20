@@ -830,13 +830,11 @@ class ARImport(BaseFolder):
                     '\nContainer type %s invalid' %(aritem.getContainerType()))
                 valid_item = False
             #validate Sample Date
-            try:
-                date_items = aritem.getSampleDate().split('/')
-                test_date = DateTime(int(date_items[2]), int(date_items[1]), int(date_items[0]))
-            except:
+            if not aritem.getSampleDate():
                 valid_item = False
-                batch_remarks.append('\n' + '%s: Sample date %s invalid' %(aritem.getSampleName(), aritem.getSampleDate()))
-                item_remarks.append('\n' + 'Sample date %s invalid' %(aritem.getSampleDate()))
+                batch_remarks.append('\n%s: Sample date invalid/missing' % (
+                    aritem.getSampleName()))
+                item_remarks.append('\nSample date invalid/missing')
 
             if self.getImportOption() == 'c':
                 analyses = aritem.getAnalyses()
