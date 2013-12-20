@@ -63,7 +63,7 @@ schema = BikaSchema.copy() + Schema((
             label=_("Sample Date"),
             visible={'edit': 'visible',
                      'view': 'visible'},
-            render_own_label=True,
+            render_own_label=False,
         ),
     ),
     StringField('NoContainers',
@@ -96,15 +96,51 @@ schema = BikaSchema.copy() + Schema((
             label = _("Priority"),
         )
     ),
-    LinesField('AnalysisProfile',
-        widget = LinesWidget(
-            label = _("Analysis Profile"),
-        )
+    ReferenceField(
+        'AnalysisProfiles',
+        required = 0,
+        multiValued = 1,
+        allowed_types=('AnalysisProfile',),
+        referenceClass=HoldingReference,
+        relationship='ARItemAnalysisProfiles',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Analysis Profiles"),
+            size=20,
+            render_own_label=False,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'visible',
+                     'secondary': 'invisible'},
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+        ),
     ),
-    LinesField('Analyses',
-        widget = LinesWidget(
-            label = _("Analyses"),
-        )
+    ReferenceField(
+        'Analyses',
+        required = 0,
+        multiValued = 1,
+        allowed_types=('AnalysisService',),
+        referenceClass=HoldingReference,
+        relationship='ARItemAnalyses',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Analyses"),
+            size=20,
+            render_own_label=False,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'visible',
+                     'secondary': 'invisible'},
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+        ),
     ),
     LinesField('Remarks',
         widget = LinesWidget(
@@ -179,5 +215,45 @@ class ARImportItem(BaseContent):
     def ContainerTypesVocabulary(self):
         from bika.lims.content.containertype import ContainerTypes
         return ContainerTypes(self, allow_blank=True)
+
+    # Profile strings need to be converted to objects
+    def setAnalysisProfiles(self, values, **kw):
+        """ Accept Title or UID, and convert Profiles title to UID
+        before saving.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        new_values = []
+        for value in values:
+            profile = self._findProfileKey(value)
+            if profile:
+                new_values.append(profile.UID())
+            else:
+                profiles = bsc(portal_type='AnalysisProfile', UID=value)
+                if profiles:
+                    new_values.append(profiles[0].UID)
+        return self.Schema()['AnalysisProfiles'].set(self, new_values)
+
+    def _findProfileKey(self, key):
+        profiles = self.bika_setup_catalog(
+                portal_type = 'AnalysisProfile')
+        for brain in profiles:
+            if brain.getObject().getProfileKey() == key:
+                return brain.getObject()
+
+    def setAnalyses(self, values, **kw):
+        """ Accept Titles or UIDs, and convert analysis title to UID
+        before saving.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        new_values = []
+        for value in values:
+            analyses = bsc(portal_type='AnalysisService', getKeyword=value)
+            if analyses:
+                new_values.append(analyses[0].UID)
+            else:
+                analyses = bsc(portal_type='AnalysisService', UID=value)
+                if analyses:
+                    new_values.append(analyses[0].UID)
+        return self.Schema()['Analyses'].set(self, new_values)
 
 atapi.registerType(ARImportItem, PROJECTNAME)

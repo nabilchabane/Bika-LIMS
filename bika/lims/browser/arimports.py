@@ -325,8 +325,6 @@ class ClientARImportAddView(BrowserView):
             progress_index = float(row_count)/float(sample_count)*100.0
             progress = ProgressState(self.request, progress_index)
             notify(UpdateProgressEvent(progress))
-            #TODO REmove for production - just to look pretty
-            #time.sleep(1)
             analyses = []
             for i in range(10, len(sample)):
                 if sample[i] != '1':
@@ -351,7 +349,7 @@ class ClientARImportAddView(BrowserView):
                 if importoption == 'c':
                     aritem.setAnalyses(analyses)
                 elif importoption == 'p':
-                    aritem.setAnalysisProfile(analyses)
+                    aritem.setAnalysisProfiles(analyses)
 
         cc_names_report = ','.join(
                 [i.strip() for i in batch_headers[6].split(';')]) \

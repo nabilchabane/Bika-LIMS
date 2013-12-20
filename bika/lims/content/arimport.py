@@ -456,7 +456,7 @@ class ARImport(BaseFolder):
             analyses = []
             row_count += 1
 
-            for profilekey in aritem.getAnalysisProfile():
+            for profilekey in aritem.getAnalysisProfiles():
                 this_profile = None
                 if not profiles.has_key(profilekey):
                     profiles[profilekey] = []
@@ -839,47 +839,51 @@ class ARImport(BaseFolder):
             if self.getImportOption() == 'c':
                 analyses = aritem.getAnalyses()
                 for analysis in analyses:
-                    if analysis not in service_keys:
-                        batch_remarks.append('\n' + '%s: Analysis %s invalid' %(aritem.getSampleName(), analysis))
-                        item_remarks.append('\n' + 'Analysis %s invalid' %(analysis))
+                    key = analysis.getKeyword()
+                    if key not in service_keys:
+                        batch_remarks.append('\n' + '%s: Analysis %s invalid' %(aritem.getSampleName(), key))
+                        item_remarks.append('\n' + 'Analysis %s invalid' %(key))
                         valid_item = False
                     # validate analysis dependancies
                     reqd_analyses = []
-                    if dependant_services.has_key(analysis):
+                    if dependant_services.has_key(key):
                         reqd_analyses = \
-                            [s.getKeyword() for s in dependant_services[analysis]]
+                            [s.getKeyword() for s in dependant_services[key]]
                     reqd_titles = ''
+                    analyses_keywords = [i.getKeyword() for i in analyses]
                     for reqd in reqd_analyses:
-                        if (reqd not in analyses):
+                        if (reqd not in analyses_keywords):
                             if reqd_titles != '':
                                 reqd_titles += ', '
                             reqd_titles += reqd
                     if reqd_titles != '':
                         valid_item = False
                         batch_remarks.append('\n' + '%s: %s needs %s' \
-                            %(aritem.getSampleName(), analysis, reqd_titles))
+                            %(aritem.getSampleName(), key, reqd_titles))
                         item_remarks.append('\n' + '%s needs %s' \
-                            %(analysis, reqd_titles))
+                            %(key, reqd_titles))
 
                 # validate analysisrequest dependancies
                 if aritem.getReportDryMatter().lower() == 'y':
-                    required = self.get_analysisrequest_dependancies('DryMatter')
+                    required = self.get_analysisrequest_dependancies(
+                                                        'DryMatter')
                     reqd_analyses = required['keys']
                     reqd_titles = ''
                     for reqd in reqd_analyses:
-                        if reqd not in analyses:
+                        if reqd not in analyses_keywords:
                             if reqd_titles != '':
                                 reqd_titles += ', '
                             reqd_titles += reqd
 
                     if reqd_titles != '':
                         valid_item = False
-                        batch_remarks.append('\n' + '%s: Report as Dry Matter needs %s' \
-                            %(aritem.getSampleName(), reqd_titles))
+                        batch_remarks.append(
+                                '\n%s: Report as Dry Matter needs %s' \
+                                    % (aritem.getSampleName(), reqd_titles))
                         item_remarks.append('\n' + 'Report as Dry Matter needs %s' \
                             %(reqd_titles))
             elif self.getImportOption() == 'p':
-                analyses = aritem.getAnalysisProfile()
+                analyses = aritem.getAnalysisProfiles()
                 if len(analyses) == 0:
                     valid_item = False
                     item_remarks.append('\n%s: No Profile provided' \

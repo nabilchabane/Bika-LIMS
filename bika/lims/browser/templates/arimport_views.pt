@@ -195,7 +195,7 @@
             <td tal:content="aritem/getReportDryMatter">ReportDM</td>
             <td tal:content="aritem/getPriority">ReportDM</td>
             <td tal:content="aritem/getOrderID">OrderID</td>
-            <td tal:condition="classic">
+            <td>
               <a  onMouseover=""
                   onMouseout=""
                   tal:attributes="
@@ -208,17 +208,12 @@
                    style="visibility:hidden"
                    tal:attributes="id string:Analyses.${repeat/aritem/number}" >
                   <table class="uncertaintytable"
-                         tal:define="analyses python:aritem.getAnalyses() or aritem.getAnalysisProfile()">
+                         tal:define="analyses python:aritem.getAnalyses() or aritem.getAnalysisProfiles()">
                       <tr tal:repeat="analysis analyses">
-                      <td tal:content="analysis"/>
+                      <td tal:content="analysis/Title"/>
                   </tr>
                   </table>
               </div>
-            </td>
-            <td tal:condition="python: not classic">
-                <span tal:condition="python: len(aritem.getAnalysisProfile()) == 1"
-                      tal:content="python: aritem.getAnalysisProfile()[0]">Profile</span>
-                <span tal:condition="python: len(aritem.getAnalysisProfile()) != 1">Error</span>
             </td>
             <td class="left"
                 tal:define="valid python:len(aritem.getRemarks()) == 0 ">
