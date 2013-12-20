@@ -112,8 +112,10 @@
         </tr>
         <tr>
             <th i18n:translate="label_samplepoint">Sample Point</th>
-            <td class="left"  tal:attributes="colspan python:left_col"
-                tal:content="context/getSamplePoint">This sample point</td>
+            <td class="left"  tal:attributes="colspan python:left_col">
+                <span tal:condition="context/getSamplePoint"
+                      tal:content="python:context.getSamplePoint().Title()">This sample point</span>
+            </td>
             <th i18n:translate="label_blank"></th>
             <td class="left"  tal:attributes="colspan python:left_col"></td>
         </tr>

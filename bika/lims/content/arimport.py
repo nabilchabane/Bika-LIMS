@@ -166,10 +166,27 @@ schema = BikaSchema.copy() + Schema((
             label = _("QuoteID"),
         ),
     ),
-    StringField('SamplePoint',
-        searchable = True,
-        widget = StringWidget(
-            label = _("Sample Point"),
+    ReferenceField(
+        'SamplePoint',
+        required = 0,
+        multiValued = 0,
+        allowed_types=('SamplePoint',),
+        referenceClass=HoldingReference,
+        relationship='ARItemSamplePoint',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Sample Point"),
+            size=20,
+            render_own_label=False,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'visible',
+                     'secondary': 'invisible'},
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
         ),
     ),
     StringField('Temperature',
@@ -246,6 +263,23 @@ class ARImport(BaseFolder):
     def _renameAfterCreation(self, check_auto_id=False):
         renameAfterCreation(self)
 
+    # Sample Point strings need to be converted to objects
+    def setSamplePoint(self, value, **kw):
+        """ Accept Title or UID, and convert SamplePoint title to UID
+        before saving.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        samplepoints = bsc(portal_type='SamplePoint', title=value)
+        if samplepoints:
+            value = samplepoints[0].UID
+        else:
+            samplepoints = bsc(portal_type='SamplePoint', UID=value)
+            if samplepoints:
+                value = samplepoints[0].UID
+            else:
+                value = None
+        return self.Schema()['SamplePoint'].set(self, value)
+
 
     # workflow methods
     #
@@ -298,7 +332,7 @@ class ARImport(BaseFolder):
 
         samplepoints = self.bika_setup_catalog(
             portal_type = 'SamplePoint',
-            Title = self.getSamplePoint())
+            Title = self.getSamplePoint().Title())
         if not samplepoints:
             valid_batch = False
 
@@ -376,7 +410,8 @@ class ARImport(BaseFolder):
                 ClientOrderNumber = self.getOrderID(),
                 ReportDryMatter = report_dry_matter,
                 SamplingDate = sample_date,
-                Analyses = analyses
+                Analyses = analyses,
+                SamplePoint =self.getSamplePoint(),
                 )
             ar.setSample(sample_uid)
             sample = ar.getSample()
@@ -436,7 +471,7 @@ class ARImport(BaseFolder):
 
         samplepoints = self.bika_setup_catalog(
             portal_type = 'SamplePoint',
-            Title = self.getSamplePoint())
+            Title = self.getSamplePoint().Title())
         if not samplepoints:
             valid_batch = False
 
@@ -778,10 +813,9 @@ class ARImport(BaseFolder):
                 valid_batch = False
 
         # validate sample point
-        samplepoint = self.getSamplePoint()
-        if samplepoint != None:
-            points = pc(portal_type='SamplePoint', 
-                Title=samplepoint)
+        if not self.getSamplePoint():
+            batch_remarks.append('\nSample Point is invalid/missing')
+            valid_batch = False
 
         sampletypes = \
             [p.Title for p in pc(portal_type="SampleType")]

@@ -1,5 +1,5 @@
 Header,Import / Export,File name,Client name,Client ID,Contact ID,CC Names - Report,CC Emails - Report,CC Emails -Invoice,Order ID,Client Reference,Sample point,No of Samples
-Header Data,Import,ARImportProfileValid,Happy Hills Feeds,HH,ritamo,Sarel Seemonster;Mike Metcalfe,mike@metcalfe.co.za; joe@soap.com,jo@blogs.com; jack@jones.com,ClientRef1,Q123,Point1.1,10
+Header Data,Import,ARImportProfileValid,Happy Hills Feeds,HH,ritamo,Sarel Seemonster;Mike Metcalfe,mike@metcalfe.co.za; joe@soap.com,jo@blogs.com; jack@jones.com,ClientRef1,Q123,Bruma Lake,10
 Samples,Client Sample ID,Sampling date,Sample Category,Sample Matrix,Container Type,Report DM,Priority,Total number of analyses,Price excl Tax,PTM,TH,Mbcount
 Analysis price,,,,,,,,,,,,
 Total analyses,,,,,,,,24,R 680,,,
