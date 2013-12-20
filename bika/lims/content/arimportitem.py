@@ -76,10 +76,15 @@ schema = BikaSchema.copy() + Schema((
             label = _("Picking Slip"),
         )
     ),
-    StringField('ContainerType',
-        widget = StringWidget(
+    ReferenceField('ContainerType',
+        required = 0,
+        allowed_types = ('ContainerType',),
+        vocabulary = 'ContainerTypesVocabulary',
+        relationship = 'ARImportItemContainerType',
+        widget = ReferenceWidget(
+            checkbox_bound = 0,
             label = _("Container Type"),
-        )
+        ),
     ),
     StringField('ReportDryMatter',
         widget = StringWidget(
@@ -153,5 +158,26 @@ class ARImportItem(BaseContent):
             else:
                 value = None
         return self.Schema()['SampleType'].set(self, value)
+
+    # Container Type strings need to be converted to objects
+    def setContainerType(self, value, **kw):
+        """ Accept Title or UID, and convert title to UID
+        before saving.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        types = bsc(portal_type='ContainerType', title=value)
+        if types:
+            value = types[0].UID
+        else:
+            types = bsc(portal_type='ContainerType', UID=value)
+            if types:
+                value = types[0].UID
+            else:
+                value = None
+        return self.Schema()['ContainerType'].set(self, value)
+
+    def ContainerTypesVocabulary(self):
+        from bika.lims.content.containertype import ContainerTypes
+        return ContainerTypes(self, allow_blank=True)
 
 atapi.registerType(ARImportItem, PROJECTNAME)

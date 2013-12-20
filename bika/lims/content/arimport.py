@@ -331,13 +331,9 @@ class ARImport(BaseFolder):
                 valid_batch = False
                 return
             sampletypeuid = sampletypes[0].getObject().UID()
+            sample_date = None
             if aritem.getSampleDate():
-                date_items = aritem.getSampleDate().split('/')
-                sample_date = DateTime(
-                    int(date_items[2]), int(date_items[1]), int(date_items[0]))
-            else:
-                sample_date = None
-
+                sample_date = aritem.getSampleDate()
             sample_id = '%s-%s' % (prefix, tmpID())
             client.invokeFactory(id = sample_id, type_name = 'Sample')
             sample = client[sample_id]
@@ -822,10 +818,14 @@ class ARImport(BaseFolder):
                     '\nSample type %s invalid' %(aritem.getSampleType()))
                 valid_item = False
             #validate container type
-            if aritem.getContainerType() not in containertypes:
-                batch_remarks.append(
-                    '\n%s: Container type %s invalid' %(
-                        aritem.getSampleName(), aritem.getContainerType()))
+            if not aritem.getContainerType():
+                batch_remarks.append('\n%s: Container type invalid' %(
+                    aritem.getSampleName()))
+                item_remarks.append('\nContainer type invalid')
+                valid_item = False
+            elif aritem.getContainerType().Title() not in containertypes:
+                batch_remarks.append('\n%s: Container type %s invalid' %(
+                    aritem.getSampleName(), aritem.getContainerType()))
                 item_remarks.append(
                     '\nContainer type %s invalid' %(aritem.getContainerType()))
                 valid_item = False

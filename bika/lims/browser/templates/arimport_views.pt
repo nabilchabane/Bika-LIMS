@@ -185,7 +185,13 @@
                 Unknown
             </td>
             <td tal:content="aritem/getPickingSlip">PickingSlip</td>
-            <td tal:content="aritem/getContainerType">PickingSlip</td>
+            <td tal:condition="aritem/getContainerType">
+                <a tal:attributes="href python:aritem.getContainerType().absolute_url() or ''"
+                   tal:content="python:aritem.getContainerType().Title() or ''">Type</a>
+            </td>
+            <td tal:condition="not:aritem/getContainerType">
+                Unknown
+            </td>
             <td tal:content="aritem/getReportDryMatter">ReportDM</td>
             <td tal:content="aritem/getPriority">ReportDM</td>
             <td tal:content="aritem/getOrderID">OrderID</td>
