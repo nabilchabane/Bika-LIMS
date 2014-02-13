@@ -1298,6 +1298,8 @@ class AR_Templates(WorksheetImporter):
 
             sampletype = self.get_object(bsc, 'SampleType',
                                          row.get('SampleType_title'))
+            samplecategory = self.get_object(bsc, 'SampleCategory',
+                                         row.get('SampleCategory_title'))
             samplepoint = self.get_object(bsc, 'SamplePoint',
                                          row.get('SamplePoint_title'))
 
@@ -1309,6 +1311,7 @@ class AR_Templates(WorksheetImporter):
                 Remarks=row.get('Remarks', ''),
                 ReportDryMatter=bool(row['ReportDryMatter']))
             obj.setSampleType(sampletype)
+            obj.setSampleCategory(samplecategory)
             obj.setSamplePoint(samplepoint)
             obj.setPartitions(partitions)
             obj.setAnalyses(analyses)

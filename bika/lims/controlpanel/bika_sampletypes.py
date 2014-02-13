@@ -50,6 +50,8 @@ class SampleTypesView(BikaListingView):
                           'toggle': True},
             'getMinimumVolume': {'title': _('Minimum Volume'),
                                  'toggle': True},
+            'getSampleCategoryTitle': {'title': _('Sample Category'),
+                                 'toggle': True},
         }
 
         self.review_states = [
@@ -57,16 +59,16 @@ class SampleTypesView(BikaListingView):
              'title': _('Active'),
              'contentFilter': {'inactive_state': 'active'},
              'transitions': [{'id':'deactivate'}, ],
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
             {'id':'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
              'transitions': [{'id':'activate'}, ],
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
         ]
 
     def folderitems(self):

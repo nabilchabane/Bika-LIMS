@@ -44,7 +44,7 @@
          url_expr="string:${object_url}/base_edit"
          i18n:attributes="title"
          i18n:domain="plone"
-         visible="True">
+         visible="False">
     <permission value="BIKA: Edit Sample"/>
  </action>
 

@@ -63,6 +63,19 @@ function workflow_transition_republish(event){
 	window.location.href = href;
 }
 
+function populate_sampletype(title) {
+	$.ajax({
+		url: window.portal_url + "/getsampletypeinfo",
+		type: 'POST',
+		data: {'_authenticator': $('input[name="_authenticator"]').val(),
+               'Title': title},
+	    dataType: "json",
+	    success: function(data, textStatus, $XHR){
+	    	$('#SampleCategory').val(data['SampleCategoryTitle']);
+	    }
+	});
+}
+
 $(document).ready(function(){
 
 	// var _ = window.jarn.i18n.MessageFactory("bika");
@@ -116,8 +129,8 @@ $(document).ready(function(){
 		        	populate_sampletype(ui.item.value);
 		        }
 		    });
-			if ($("input[id='SampleMatrix']")) {
-				$("input[id='SampleMatrix']").attr('readonly', true);
+			if ($("input[id='SampleCategory']")) {
+				$("input[id='SampleCategory']").attr('readonly', true);
 			}
 		}
 	}

@@ -23,7 +23,7 @@ AddClientFolder = 'BIKA: Add ClientFolder'
 AddInvoice = 'BIKA: Add Invoice'
 AddMethod = 'BIKA: Add Method'
 AddSample = 'BIKA: Add Sample'
-AddSampleMatrix = 'BIKA: Add SampleMatrix'
+AddSampleCategory = 'BIKA: Add SampleCategory'
 AddSamplePartition = 'BIKA: Add SamplePartition'
 AddSamplePoint = 'BIKA: Add SamplePoint'
 AddSamplingDeviation = 'BIKA: Add SamplingDeviation'
@@ -44,7 +44,7 @@ ADD_CONTENT_PERMISSIONS = {
     'Invoice': AddInvoice,
     'Method': AddMethod,
     'Sample': AddSample,
-    'SampleMatrix': AddSampleMatrix,
+    'SampleCategory': AddSampleCategory,
     'SamplePartition': AddSamplePartition,
     'SamplingDeviation': AddSamplingDeviation,
     'Query': AddQuery,

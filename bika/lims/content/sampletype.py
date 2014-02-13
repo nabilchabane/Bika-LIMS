@@ -94,6 +94,13 @@ schema = BikaSchema.copy() + Schema((
             visibile=False,
         )
     ),
+    ComputedField(
+        'SampleCategoryTitle',
+        expression="context.getSampleCategory() and context.getSampleCategory().Title() or ''",
+        widget = ComputedWidget(
+            visibile=False,
+        )
+    ),
 ))
 
 schema['description'].schemata = 'default'

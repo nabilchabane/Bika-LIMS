@@ -6,7 +6,7 @@ Resource                keywords.txt
 Variables               plone/app/testing/interfaces.py
 
 Suite Setup             Start browser
-# Suite Teardown          Close All Browsers
+Suite Teardown          Close All Browsers
 
 *** Variables ***
 
@@ -17,26 +17,29 @@ ${ar_factory_url}  portal_factory/AnalysisRequest/Request new analyses/ar_add
 *** Test Cases ***
 
 Analysis Request with no samping or preservation workflow
+    Go to                     ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=1
+    ${ar_id}=                 Complete ar_add form with template Borehole 12 Hardness
 
     Go to                     ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=1
-    ${ar_id}=                 Complete ar_add form with template Bore
+    ${ar_id}=                 Complete ar_add form without template
+
     Go to                     ${PLONEURL}/clients/client-1/analysisrequests
     Execute transition receive on items in form_id analysisrequests
     Log out
     Log in                    test_analyst    test_analyst
     Go to                     ${PLONEURL}/clients/client-1/${ar_id}/manage_results
-    Submit results with out of range tests
-    Log out
-    Log in                    test_labmanager1    test_labmanager1
-    Add new Copper analysis to ${ar_id}
+    #Submit results with out of range tests
+    #Log out
+    #Log in                    test_labmanager1    test_labmanager1
+    #Add new Copper analysis to ${ar_id}
     ${ar_id} state should be sample_received
-    Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
-    Execute transition verify on items in form_id lab_analyses
-    Log out
-    Log in                    test_labmanager    test_labmanager
-    # There is no "retract" transition on verified analyses - but there should/will be.
-    # Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
-    # Execute transition retract on items in form_id lab_analyses
+    #Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
+    #Execute transition verify on items in form_id lab_analyses
+    #Log out
+    #Log in                    test_labmanager    test_labmanager
+    ## There is no "retract" transition on verified analyses - but there should/will be.
+    ## Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
+    ## Execute transition retract on items in form_id lab_analyses
 
 Check that the Contact CC auto-fills correctly when a contact is selected
     Go to                               ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=2
@@ -64,9 +67,10 @@ Check that the Contact CC auto-fills correctly when a contact is selected
 Start browser
     Open browser                        ${PLONEURL}/login_form
     Log in                              test_labmanager         test_labmanager
-    Set selenium speed                  ${SELENIUM_SPEED}
+    Set Selenium Speed  ${SELENIUM_SPEED}
 
 Complete ar_add form with template ${template}
+    Select from dropdown        ar_0_Contact  Rita Mohale
     @{time} =                   Get Time        year month day hour min sec
     SelectDate                  ar_0_SamplingDate   @{time}[2]
     Select from dropdown        ar_0_Contact       Rita
@@ -77,13 +81,17 @@ Complete ar_add form with template ${template}
     Set Selenium Timeout        10
     ${ar_id} =                  Get text      //dl[contains(@class, 'portalMessage')][2]/dd
     ${ar_id} =                  Set Variable  ${ar_id.split()[2]}
+    Page should contain        Sample Category
+    Page should contain        Clinical
     [return]                    ${ar_id}
 
 Complete ar_add form Without template
+    Select from dropdown        ar_0_Contact  Rita Mohale
     @{time} =                  Get Time        year month day hour min sec
     SelectDate                 ar_0_SamplingDate   @{time}[2]
     Select From Dropdown       ar_0_SampleType    Water
-    Select from dropdown       ar_0_Contact       Rita
+    Select From Dropdown       ar_0_SampleCategory  Food
+    #Set Selenium Timeout       30
     Click Element              xpath=//th[@id='cat_lab_Water Chemistry']
     Select Checkbox            xpath=//input[@title='Moisture' and @name='ar.0.Analyses:list:ignore_empty:record']
     Click Element              xpath=//th[@id='cat_lab_Metals']
@@ -94,12 +102,14 @@ Complete ar_add form Without template
     Select Checkbox            xpath=//input[@title='Ecoli' and @name='ar.0.Analyses:list:ignore_empty:record']
     Select Checkbox            xpath=//input[@title='Enterococcus' and @name='ar.0.Analyses:list:ignore_empty:record']
     Select Checkbox            xpath=//input[@title='Salmonella' and @name='ar.0.Analyses:list:ignore_empty:record']
-    Set Selenium Timeout       30
+    #Set Selenium Timeout       30
     Click Button               Save
     Wait until page contains   created
-    Set Selenium Timeout       10
+    #Set Selenium Timeout       10
     ${ar_id} =                 Get text      //dl[contains(@class, 'portalMessage')][2]/dd
     ${ar_id} =                 Set Variable  ${ar_id.split()[2]}
+    Page should contain        Sample Category
+    Page should contain        Clinical
     [return]                   ${ar_id}
 
 Submit results with out of range tests
@@ -124,6 +134,7 @@ Submit results
     Wait Until Page Contains   Changes saved.
 
 Add new ${service} analysis to ${ar_id}
+    Set Selenium Speed         10
     Go to                      ${PLONEURL}/clients/client-1/${ar_id}/analyses
     select checkbox            xpath=//input[@alt='Select ${service}']
     click element              save_analyses_button_transition

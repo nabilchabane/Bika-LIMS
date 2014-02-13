@@ -435,6 +435,8 @@ class SamplesView(BikaListingView):
                                   'toggle': True},
             'getSampleTypeTitle': {'title': _('Sample Type'),
                                    'index': 'getSampleTypeTitle'},
+            'getSampleCategoryTitle': {'title': _('Sample Category'),
+                                   'index': 'getSampleCategoryTitle'},
             'getSamplePointTitle': {'title': _('Sample Point'),
                                     'index': 'getSamplePointTitle',
                                     'toggle': False},
@@ -477,6 +479,7 @@ class SamplesView(BikaListingView):
                          'getClientReference',
                          'getClientSampleID',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -507,6 +510,7 @@ class SamplesView(BikaListingView):
                          'getDatePreserved',
                          'getPreserver',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -524,6 +528,7 @@ class SamplesView(BikaListingView):
                          'getClientReference',
                          'getClientSampleID',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -546,6 +551,7 @@ class SamplesView(BikaListingView):
                          'getClientReference',
                          'getClientSampleID',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -568,6 +574,7 @@ class SamplesView(BikaListingView):
                          'getClientReference',
                          'getClientSampleID',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -591,6 +598,7 @@ class SamplesView(BikaListingView):
                          'getClientReference',
                          'getClientSampleID',
                          'getSampleTypeTitle',
+                         'getSampleCategoryTitle',
                          'getSamplePointTitle',
                          'SamplingDeviation',
                          'AdHoc',
@@ -751,8 +759,8 @@ class ajaxGetSampleTypeInfo(BrowserView):
                'Title': '',
                'Prefix': '',
                'Hazardous': '',
-               'SampleMatrixUID': '',
-               'SampleMatrixTitle': '',
+               'SampleCategoryUID': '',
+               'SampleCategory': '',
                'MinimumVolume':  '',
                'ContainerTypeUID': '',
                'ContainerTypeTitle': '',
@@ -774,15 +782,16 @@ class ajaxGetSampleTypeInfo(BrowserView):
 
         if proxies and len(proxies) == 1:
             st = proxies[0].getObject();
+            import pdb; pdb.set_trace()
             ret = {
                'UID': st.UID(),
                'Title': st.Title(),
                'Prefix': st.getPrefix(),
                'Hazardous': st.getHazardous(),
-               'SampleMatrixUID': st.getSampleMatrix() and \
-                                  st.getSampleMatrix().UID() or '',
-               'SampleMatrixTitle': st.getSampleMatrix() and \
-                                  st.getSampleMatrix().Title() or '',
+               'SampleCategoryUID': st.getSampleCategory() and \
+                                  st.getSampleCategory().UID() or '',
+               'SampleCategory': st.getSampleCategory() and \
+                                  st.getSampleCategory().Title() or '',
                'MinimumVolume':  st.getMinimumVolume(),
                'ContainerTypeUID': st.getContainerType() and \
                                    st.getContainerType().UID() or '',
@@ -808,6 +817,7 @@ class WidgetVisibility(_WV):
             'visible': [
                 'SamplingDate',
                 'SampleType',
+                'SampleCategory',
                 'SamplePoint',
                 'ClientReference',
                 'ClientSampleID',
@@ -831,6 +841,7 @@ class WidgetVisibility(_WV):
                 'SampleCondition',
                 'SamplePoint',
                 'SampleType',
+                'SampleCategory',
                 'SamplingDate',
                 'SamplingDeviation',
             ]
@@ -849,6 +860,7 @@ class WidgetVisibility(_WV):
                 'SampleCondition',
                 'SamplePoint',
                 'SampleType',
+                'SampleCategory',
                 'SamplingDate',
                 'SamplingDeviation',
             ]
@@ -863,6 +875,7 @@ class WidgetVisibility(_WV):
                 'SampleCondition',
                 'SamplePoint',
                 'SampleType',
+                'SampleCategory',
                 'SamplingDate',
                 'SamplingDeviation',
             ]
@@ -877,6 +890,7 @@ class WidgetVisibility(_WV):
                 'SampleCondition',
                 'SamplePoint',
                 'SampleType',
+                'SampleCategory',
                 'SamplingDate',
                 'SamplingDeviation',
             ]
