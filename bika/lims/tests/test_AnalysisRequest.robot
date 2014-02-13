@@ -28,18 +28,18 @@ Analysis Request with no samping or preservation workflow
     Log out
     Log in                    test_analyst    test_analyst
     Go to                     ${PLONEURL}/clients/client-1/${ar_id}/manage_results
-    #Submit results with out of range tests
-    #Log out
-    #Log in                    test_labmanager1    test_labmanager1
-    #Add new Copper analysis to ${ar_id}
+    Submit results with out of range tests
+    Log out
+    Log in                    test_labmanager1    test_labmanager1
+    Add new Copper analysis to ${ar_id}
     ${ar_id} state should be sample_received
-    #Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
-    #Execute transition verify on items in form_id lab_analyses
-    #Log out
-    #Log in                    test_labmanager    test_labmanager
-    ## There is no "retract" transition on verified analyses - but there should/will be.
-    ## Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
-    ## Execute transition retract on items in form_id lab_analyses
+    Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
+    Execute transition verify on items in form_id lab_analyses
+    Log out
+    Log in                    test_labmanager    test_labmanager
+    # There is no "retract" transition on verified analyses - but there should/will be.
+    # Go to                     ${PLONEURL}/clients/client-1/${ar_id}/base_view
+    # Execute transition retract on items in form_id lab_analyses
 
 Check that the Contact CC auto-fills correctly when a contact is selected
     Go to                               ${PLONEURL}/clients/client-1/${ar_factory_url}?col_count=2
