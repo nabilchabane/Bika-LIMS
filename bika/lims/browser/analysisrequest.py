@@ -1065,13 +1065,6 @@ class AnalysisRequestAddView(AnalysisRequestViewView):
                 ps.append(service.UID())
         return json.dumps(ps)
 
-                sc_title = template.getSampleCategory().Title() \
-                    if template.getSampleCategory() else ''
-                sc_uid = template.getSampleCategory().UID() \
-                    if template.getSampleCategory() else ''
-                    'SampleCategory':sc_title,
-                    'SampleCategory_uid':sc_uid,
-
 class SecondaryARSampleInfo(BrowserView):
     """Return fieldnames and pre-digested values for Sample fields which
     javascript must disable/display while adding secondary ARs
