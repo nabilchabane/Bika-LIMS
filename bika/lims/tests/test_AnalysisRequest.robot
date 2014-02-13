@@ -181,6 +181,7 @@ TestSampleState
 
 Check Sample Category exists ${ar_id}
     Go to                     ${PLONEURL}/clients/client-1/${ar_id}
+    Page should contain     Sample Category
     Page should contain     Clinical
 
     Go to                     ${PLONEURL}/samples

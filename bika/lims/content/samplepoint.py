@@ -119,6 +119,9 @@ class SamplePoint(BaseContent, HistoryAwareMixin):
         existing = self.Schema()['SampleTypes'].get(self)
         removed = existing and [s for s in existing if s not in value] or []
         added = value and [s for s in value if s not in existing] or []
+        ##Set it
+        #print 'SamplePoint %s: set types: %s' % (self.Title(),
+        #    '; '.join([v.Title() for v in value]))
         ret = self.Schema()['SampleTypes'].set(self, value)
 
         for st in removed:

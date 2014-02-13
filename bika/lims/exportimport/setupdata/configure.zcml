@@ -129,6 +129,12 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"/>
 
     <adapter
+      name="Sample_Category_Sample_Types"
+      factory="bika.lims.exportimport.setupdata.Sample_Category_Sample_Types"
+      provides="bika.lims.interfaces.ISetupDataImporter"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"/>
+
+    <adapter
       name="Sample_Points"
       factory="bika.lims.exportimport.setupdata.Sample_Points"
       provides="bika.lims.interfaces.ISetupDataImporter"

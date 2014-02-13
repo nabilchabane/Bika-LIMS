@@ -50,7 +50,7 @@ class SampleTypesView(BikaListingView):
                           'toggle': True},
             'getMinimumVolume': {'title': _('Minimum Volume'),
                                  'toggle': True},
-            'getSampleCategoryTitle': {'title': _('Sample Categories'),
+            'getSampleCategoriesTitle': {'title': _('Sample Categories'),
                                  'toggle': True},
         }
 
@@ -59,16 +59,16 @@ class SampleTypesView(BikaListingView):
              'title': _('Active'),
              'contentFilter': {'inactive_state': 'active'},
              'transitions': [{'id':'deactivate'}, ],
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoriesTitle']},
             {'id':'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
              'transitions': [{'id':'activate'}, ],
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoriesTitle']},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
-             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoryTitle']},
+             'columns': ['Title', 'Description', 'getHazardous', 'getPrefix', 'getMinimumVolume', 'getSampleCategoriesTitle']},
         ]
 
     def folderitems(self):
@@ -79,6 +79,8 @@ class SampleTypesView(BikaListingView):
             items[x]['Description'] = obj.Description()
             items[x]['replace']['Title'] = "<a href='%s'>%s</a>" % \
                  (items[x]['url'], items[x]['Title'])
+            titles = [st.Title() for st in obj.getSampleCategories()]
+            items[x]['getSampleCategoriesTitle'] = ",".join(titles)
         return items
 
 schema = ATFolderSchema.copy()

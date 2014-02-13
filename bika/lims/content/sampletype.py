@@ -35,7 +35,7 @@ schema = BikaSchema.copy() + Schema((
             description = _("Samples of this type should be treated as hazardous"),
         ),
     ),
-    ReferenceField('SampleCategory',
+    ReferenceField('SampleCategories',
         required = 0,
         multiValued = 1,
         allowed_types = ('SampleCategory',),
@@ -44,7 +44,7 @@ schema = BikaSchema.copy() + Schema((
         referenceClass = HoldingReference,
         widget = ReferenceWidget(
             checkbox_bound = 0,
-            label = _('Sample Category'),
+            label = _('Sample Categories'),
             size = 3,
         ),
     ),
@@ -97,8 +97,8 @@ schema = BikaSchema.copy() + Schema((
         )
     ),
     ComputedField(
-        'SampleCategoryTitle',
-        expression="context.getSampleCategory() and '|'.join([c.Title() for c in context.getSampleCategory()]) or ''",
+        'SampleCategoriesTitle',
+        expression="[o.Title() for o in context.getSampleCategories()]",
         widget = ComputedWidget(
             visibile=False,
         )
@@ -181,7 +181,47 @@ class SampleType(BaseContent, HistoryAwareMixin):
         return ret
 
     def getSamplePoints(self, **kw):
+        #TODO MM: Why's this necessary?
         return self.Schema()['SamplePoints'].get(self)
+
+    def setSampleCategories(self, value, **kw):
+        """ For the moment, we're manually trimming the
+            sampletype<>samplecategory relation to be equal on both sides, here.
+            It's done strangely, because it may be required to behave strangely.
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        ## convert value to objects
+        if value and type(value) == str:
+            value = [bsc(UID=value)[0].getObject(),]
+        elif value and type(value) in (list, tuple) and type(value[0]) == str:
+            value = [bsc(UID=uid)[0].getObject() for uid in value if uid]
+        ## Find all SampleCategories that were removed
+        existing = self.Schema()['SampleCategories'].get(self)
+        removed = existing and [s for s in existing if s not in value] or []
+        added = value and [s for s in value if s not in existing] or []
+        ##Set it
+        #print 'SampleType %s: set Cats: %s' % (self.Title(),
+        #    '; '.join([v.Title() for v in value]))
+        ret = self.Schema()['SampleCategories'].set(self, value)
+
+        for sc in removed:
+            sampletypes = sc.getSampleTypes()
+            if self in sampletypes:
+                sampletypes.remove(self)
+                #print 'SampleType %s: remove %s' % (sc.Title(),
+                #        str([t.Title() for t in sampletypes]))
+                sc.setSampleTypes(sampletypes)
+
+        for sc in added:
+            #print 'SampleType %s: add %s' % (sc.Title(),
+            #    str([t.Title() for t in list(sc.getSampleTypes()) + [self,]]))
+            sc.setSampleTypes(list(sc.getSampleTypes()) + [self,])
+
+        return ret
+
+    def getSampleCategories(self, **kw):
+        #TODO MM: Why's this necessary?
+        return self.Schema()['SampleCategories'].get(self)
 
     def SampleCategoriesVocabulary(self):
         from bika.lims.content.samplecategory import SampleCategories
