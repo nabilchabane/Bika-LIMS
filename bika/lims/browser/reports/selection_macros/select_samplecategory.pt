@@ -1,0 +1,26 @@
+<div class="field" i18n:domain="bika">
+
+    <label i18n:translate="">Sample category</label>
+    <br/>
+
+    <select name="SampleCategoryUID:ignore_empty"
+            id="SampleCategoryUID"
+            tal:attributes="style string:font-family:${here/base_properties/fontFamily};;font-size:100%;">
+
+        <option tal:condition="python:view.allow_blank" value=""/>
+
+        <tal:samplecategories tal:repeat="category view/samplecategories">
+
+            <option value=""
+                tal:define="samplecategory_uid python:category.UID"
+                tal:attributes="
+                    value samplecategory_uid;
+                    selected python:request.get('SampleCategoryUID', '') == samplecategory_uid and 'selected' or ''"
+                tal:content="category/Title">
+            </option>
+
+        </tal:samplecategories>
+
+    </select>
+
+</div>

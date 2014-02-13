@@ -37,6 +37,7 @@ schema = BikaSchema.copy() + Schema((
     ),
     ReferenceField('SampleCategory',
         required = 0,
+        multiValued = 1,
         allowed_types = ('SampleCategory',),
         vocabulary = 'SampleCategoriesVocabulary',
         relationship = 'SampleTypeSampleCategory',
@@ -44,6 +45,7 @@ schema = BikaSchema.copy() + Schema((
         widget = ReferenceWidget(
             checkbox_bound = 0,
             label = _('Sample Category'),
+            size = 3,
         ),
     ),
     StringField('Prefix',
@@ -96,7 +98,7 @@ schema = BikaSchema.copy() + Schema((
     ),
     ComputedField(
         'SampleCategoryTitle',
-        expression="context.getSampleCategory() and context.getSampleCategory().Title() or ''",
+        expression="context.getSampleCategory() and '|'.join([c.Title() for c in context.getSampleCategory()]) or ''",
         widget = ComputedWidget(
             visibile=False,
         )
@@ -183,7 +185,7 @@ class SampleType(BaseContent, HistoryAwareMixin):
 
     def SampleCategoriesVocabulary(self):
         from bika.lims.content.samplecategory import SampleCategories
-        return SampleCategories(self, allow_blank=True)
+        return SampleCategories(self, allow_blank=False)
 
     def ContainerTypesVocabulary(self):
         from bika.lims.content.containertype import ContainerTypes

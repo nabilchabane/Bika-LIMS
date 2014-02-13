@@ -782,7 +782,6 @@ class ajaxGetSampleTypeInfo(BrowserView):
 
         if proxies and len(proxies) == 1:
             st = proxies[0].getObject();
-            import pdb; pdb.set_trace()
             ret = {
                'UID': st.UID(),
                'Title': st.Title(),

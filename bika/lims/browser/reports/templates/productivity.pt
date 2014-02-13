@@ -210,6 +210,7 @@
 															   workflow_id='bika_worksheetanalysis_workflow',
 															   field_id='bika_worksheetanalysis_workflow',
 															   field_title='Worksheet state')"/>
+                        <tal:x content="structure context/@@selection_macros/select_samplecategory"/>
 						<tal:x content="structure context/@@selection_macros/select_output_format"/>
 					</fieldset>
 					<input tabindex=""

@@ -1,3 +1,6 @@
+import ast
+import json
+import plone
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
@@ -11,8 +14,6 @@ from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import StringWidget
 from Products.CMFCore.utils import getToolByName
 from zope.component import getAdapters
-import json
-import plone
 
 class ReferenceWidget(StringWidget):
     _properties = StringWidget._properties.copy()
@@ -138,8 +139,17 @@ class ajaxReferenceWidgetSearch(BrowserView):
         rows = []
 
         brains = []
-        for name, adapter in getAdapters((self.context, self.request), IReferenceWidgetVocabulary):
-            brains.extend(adapter())
+        base_query = ast.literal_eval(self.request['base_query'])
+        search_query = ast.literal_eval(self.request['search_query'])
+        if len(search_query.keys()) > 0:
+            search_query.update(base_query)
+            catalog = getToolByName(self, self.request['catalog_name'])
+            brains = catalog(search_query)
+        else:
+            for name, adapter in getAdapters(
+                    (self.context, self.request), IReferenceWidgetVocabulary):
+                brains.extend(adapter())
+
 
         for p in brains:
             row = {'UID': getattr(p, 'UID'),
@@ -192,4 +202,5 @@ class ajaxReferenceWidgetSearch(BrowserView):
                'records': len(rows),
                'rows': rows[start:end]}
 
+        #print ret
         return json.dumps(ret)

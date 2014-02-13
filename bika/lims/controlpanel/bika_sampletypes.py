@@ -50,7 +50,7 @@ class SampleTypesView(BikaListingView):
                           'toggle': True},
             'getMinimumVolume': {'title': _('Minimum Volume'),
                                  'toggle': True},
-            'getSampleCategoryTitle': {'title': _('Sample Category'),
+            'getSampleCategoryTitle': {'title': _('Sample Categories'),
                                  'toggle': True},
         }
 
