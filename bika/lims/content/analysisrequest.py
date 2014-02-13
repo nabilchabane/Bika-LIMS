@@ -339,6 +339,28 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
     ReferenceField(
+        'SampleCategory',
+        required=1,
+        allowed_types='SampleCategory',
+        relationship='AnalysisRequestSampleCategory',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Sample Category"),
+            description=_("Create a new sample of this category"),
+            size=20,
+            render_own_label=True,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'visible',
+                     'secondary': 'invisible'},
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+        ),
+    ),    
+    ReferenceField(
         'SamplePoint',
         allowed_types='SamplePoint',
         relationship='AnalysisRequestSamplePoint',
@@ -642,6 +664,14 @@ schema = BikaSchema.copy() + Schema((
         'SampleTypeTitle',
         searchable=True,
         expression="here.getSampleType().Title() if here.getSampleType() else ''",
+        widget=ComputedWidget(
+            visible=False,
+        ),
+    ),
+    ComputedField(
+        'SampleCategoryTitle',
+        searchable=True,
+        expression="here.getSampleCategory().Title() if here.getSampleCategory() else ''",
         widget=ComputedWidget(
             visible=False,
         ),
@@ -1224,6 +1254,18 @@ class AnalysisRequest(BaseFolder):
         sample = self.getSample()
         if sample:
             return sample.getSampleType()
+
+    security.declarePublic('setSampleCategory')
+    def setSampleCategory(self, value):
+        sample = self.getSample()
+        if sample:
+            return sample.setSampleCategory(value)
+
+    security.declarePublic('getSampleCategory')
+    def getSampleCategory(self):
+        sample = self.getSample()
+        if sample:
+            return sample.getSampleCategory()
 
     security.declarePublic('setClientReference')
     def setClientReference(self, value):

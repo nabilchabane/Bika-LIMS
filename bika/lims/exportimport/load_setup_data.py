@@ -91,6 +91,9 @@ class LoadSetupData(BrowserView):
                 adapter = [a[1] for a in adapters if a[0] == ad_name][0]
                 adapter(self, workbook, self.dataset_project, self.dataset_name)
                 adapters = [a for a in adapters if a[0] != ad_name]
+            else:
+                logger.info("No import adapter for %s" % ad_name)
+
         for name, adapter in adapters:
             transaction.savepoint()
             adapter(self, workbook, self.dataset_project, self.dataset_name)

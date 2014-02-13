@@ -94,7 +94,7 @@ def initialize(context):
     from content.reportfolder import ReportFolder
     from content.sample import Sample
     from content.samplecondition import SampleCondition
-    from content.samplematrix import SampleMatrix
+    from content.samplecategory import SampleCategory
     from content.samplepartition import SamplePartition
     from content.samplepoint import SamplePoint
     from content.samplesfolder import SamplesFolder
@@ -127,7 +127,7 @@ def initialize(context):
     from controlpanel.bika_preservations import Preservations
     from controlpanel.bika_referencedefinitions import ReferenceDefinitions
     from controlpanel.bika_sampleconditions import SampleConditions
-    from controlpanel.bika_samplematrices import SampleMatrices
+    from controlpanel.bika_samplecategories import SampleCategories
     from controlpanel.bika_samplepoints import SamplePoints
     from controlpanel.bika_sampletypes import SampleTypes
     from controlpanel.bika_samplingdeviations import SamplingDeviations

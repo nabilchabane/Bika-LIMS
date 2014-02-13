@@ -737,19 +737,23 @@ class Instrument_Schedule(WorksheetImporter):
                 renameAfterCreation(obj)
 
 
-class Sample_Matrices(WorksheetImporter):
+class Sample_Categories(WorksheetImporter):
 
     def Import(self):
-        folder = self.context.bika_setup.bika_samplematrices
+        folder = self.context.bika_setup.bika_samplecategories
         for row in self.get_rows(3):
             if not row['title']:
                 continue
-            _id = folder.invokeFactory('SampleMatrix', id=tmpID())
+            _id = folder.invokeFactory('SampleCategory', id=tmpID())
             obj = folder[_id]
             obj.edit(
                 title=row['title'],
                 description=row.get('description', '')
             )
+            #sampletype = self.get_object(bsc, 'SampleType',
+            #                             row.get('SampleType_title'))
+            #if sampletype:
+            #    obj.setSampleTypes([sampletype, ])
             obj.unmarkCreationFlag()
             renameAfterCreation(obj)
 
@@ -777,8 +781,8 @@ class Sample_Types(WorksheetImporter):
                 continue
             _id = folder.invokeFactory('SampleType', id=tmpID())
             obj = folder[_id]
-            samplematrix = self.get_object(bsc, 'SampleMatrix',
-                                           row.get('SampleMatrix_title'))
+            samplecategory = self.get_object(bsc, 'SampleCategory',
+                                           row.get('SampleCategory_title'))
             containertype = self.get_object(bsc, 'ContainerType',
                                             row.get('ContainerType_title'))
             retentionperiod = {
@@ -790,7 +794,7 @@ class Sample_Types(WorksheetImporter):
                 description=row.get('description', ''),
                 RetentionPeriod=retentionperiod,
                 Hazardous=self.to_bool(row['Hazardous']),
-                SampleMatrix=samplematrix,
+                SampleCategory=[samplecategory,],
                 Prefix=row['Prefix'],
                 MinimumVolume=row['MinimumVolume'],
                 ContainerType=containertype
@@ -802,6 +806,27 @@ class Sample_Types(WorksheetImporter):
             obj.unmarkCreationFlag()
             renameAfterCreation(obj)
 
+class Sample_Category_Sample_Types(WorksheetImporter):
+
+    def Import(self):
+        bsc = getToolByName(self.context, 'bika_setup_catalog')
+        for row in self.get_rows(3):
+            sampletype = self.get_object(bsc,
+                                         'SampleType',
+                                         row.get('SampleType_title'))
+            samplecategory = self.get_object(bsc,
+                                          'SampleCategory',
+                                          row['SampleCategory_title'])
+
+            sampletypes = samplecategory.getSampleTypes()
+            if sampletype not in sampletypes:
+                sampletypes.append(sampletype)
+                samplecategory.setSampleTypes(sampletypes)
+
+            samplecategories = sampletype.getSampleCategories()
+            if samplecategory not in samplecategories:
+                samplecategories.append(samplecategory)
+                sampletype.setSampleCategories(samplecategories)
 
 class Sample_Points(WorksheetImporter):
 
@@ -1298,6 +1323,8 @@ class AR_Templates(WorksheetImporter):
 
             sampletype = self.get_object(bsc, 'SampleType',
                                          row.get('SampleType_title'))
+            samplecategory = self.get_object(bsc, 'SampleCategory',
+                                         row.get('SampleCategory_title'))
             samplepoint = self.get_object(bsc, 'SamplePoint',
                                          row.get('SamplePoint_title'))
 
@@ -1309,6 +1336,7 @@ class AR_Templates(WorksheetImporter):
                 Remarks=row.get('Remarks', ''),
                 ReportDryMatter=bool(row['ReportDryMatter']))
             obj.setSampleType(sampletype)
+            obj.setSampleCategory(samplecategory)
             obj.setSamplePoint(samplepoint)
             obj.setPartitions(partitions)
             obj.setAnalyses(analyses)

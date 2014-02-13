@@ -63,6 +63,20 @@ function workflow_transition_republish(event){
 	window.location.href = href;
 }
 
+function populate_sampletype(title) {
+debugger;
+	$.ajax({
+		url: window.portal_url + "/getsampletypeinfo",
+		type: 'POST',
+		data: {'_authenticator': $('input[name="_authenticator"]').val(),
+               'Title': title},
+	    dataType: "json",
+	    success: function(data, textStatus, $XHR){
+	    	$('#SampleCategory').val(data['SampleCategoryTitle']);
+	    }
+	});
+}
+
 $(document).ready(function(){
 
 	// var _ = window.jarn.i18n.MessageFactory("bika");
@@ -103,5 +117,24 @@ $(document).ready(function(){
 	$("#SampleType").autocomplete({ minLength: 0, source: autocomplete_sampletype});
 	$("#SamplePoint").autocomplete({ minLength: 0, source: autocomplete_samplepoint});
 
+	// Update sample matrix when sample type changed in AnalysisRequestViewView
+	// Must be only loaded in AnalysisRequestViewView:
+	//  /clients/<client_id>/<ar_id>
+	//  /clients/<client_id>/<ar_id>/base_view
+	if (window.location.href.search('/clients/') >= 0) {
+		clientid =  window.location.href.split('/clients/')[1].split('/')[0];
+		arid = $(".documentFirstHeading").html();
+		if (arid && window.location.href.search('/clients/'+clientid+'/'+arid)) {
+			$("#SampleType").autocomplete({
+		        select: function (event, ui) {
+		        	populate_sampletype(ui.item.value);
+		        }
+		    });
+			if ($("input[id='SampleCategory']")) {
+				$("input[id='SampleCategory']").attr('readonly', true);
+			}
+		}
+	}
+	
 });
 }(jQuery));

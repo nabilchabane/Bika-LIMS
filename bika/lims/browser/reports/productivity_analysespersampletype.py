@@ -35,7 +35,6 @@ class Report(BrowserView):
         headings['header'] = _("Analyses per sample type")
         headings['subheader'] = _("Number of analyses requested per sample type")
 
-        count_all = 0
         query = {'portal_type': 'Analysis'}
         client_title = None
         if 'ClientUID' in self.request.form:
@@ -91,29 +90,50 @@ class Report(BrowserView):
                  'value': ws_review_state,
                  'type': 'text'})
 
+        samplecategory = 'Undefined'
+        if self.request.form.has_key('SampleCategoryUID'):
+            samplecategory_uid = self.request.form['SampleCategoryUID']
+            query['samplecategory'] = samplecategory_uid
+            samplecategory = rc.lookupObject(samplecategory_uid)
+            samplecategorytitle = samplecategory.Title()
+
+        parms.append(
+            { 'title': _('Sample Category'),
+             'value': samplecategorytitle,
+             'type': 'text'})
+
         # and now lets do the actual report lines
         formats = {'columns': 2,
-                   'col_heads': [_('Sample type'), _('Number of analyses')],
+                   'col_heads': [ _('Sample type'), 
+                                  _('Number of analyses')],
                    'class': '',
                   }
 
         datalines = []
-        for sampletype in sc(portal_type="SampleType",
+        count_all = 0
+        for cat in sc(portal_type="SampleCategory",
                         sort_on='sortable_title'):
-            query['getSampleTypeUID'] = sampletype.UID
-            analyses = bac(query)
-            count_analyses = len(analyses)
+            dataline = [{'value': cat.Title,
+                        'class': 'category_heading',
+                        'colspan': 2},]
+            datalines.append(dataline)
+            for sampletype in sc(portal_type="SampleType",
+                            sort_on='sortable_title'):
+                query['getSampleTypeUID'] = sampletype.UID
+                query['getSampleCategoryUID'] = cat.UID
+                analyses = bac(query)
+                count_analyses = len(analyses)
 
-            dataline = []
-            dataitem = {'value': sampletype.Title}
-            dataline.append(dataitem)
+                dataline = []
+                dataitem = {'value': sampletype.Title}
+                dataline.append(dataitem)
             dataitem = {'value': count_analyses}
 
-            dataline.append(dataitem)
+                dataline.append(dataitem)
 
-            datalines.append(dataline)
+                datalines.append(dataline)
 
-            count_all += count_analyses
+                count_all += count_analyses
 
         # footer data
         footlines = []

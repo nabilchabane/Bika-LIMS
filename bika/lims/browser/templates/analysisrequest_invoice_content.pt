@@ -28,6 +28,10 @@
 			<th i18n:translate="">Data Recieved</th>
 			<td tal:content="view/dateRecieved"></td>
 		</tr>
+		<tr>
+			<th i18n:translate="">Sample Category</th>
+			<td tal:content="view/sampleCategory"></td>
+		</tr>
 		<tr tal:condition="view/verified">
 			<th i18n:translate="">Verified By</th>
 			<td tal:content="view/verifiedBy"></td>

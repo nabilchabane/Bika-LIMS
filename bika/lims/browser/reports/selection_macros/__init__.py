@@ -237,6 +237,24 @@ class SelectionMacrosView(BrowserView):
             res['titles'] = title
             return res
 
+    select_samplecategory_pt = ViewPageTemplateFile("select_samplecategory.pt")
+    def select_samplecategory(self, allow_blank=True, multiselect=False):
+        self.allow_blank = allow_blank
+        self.multiselect = multiselect
+        self.samplecategories = self.bsc(portal_type='SampleCategory', inactive_state='active', sort_on='sortable_title')
+        return self.select_samplecategory_pt()
+
+    def parse_samplecategory(self, request):
+        val = request.form.get("SampleCategoryUID", "")
+        if val:
+            obj = val and self.rc.lookupObject(val)
+            title = obj.Title()
+            res = {}
+            res['contentFilter'] = ('getSampleCategoryUID', val)
+            res['parms'] = {'title': _("Sample Category"), 'value': title}
+            res['titles'] = title
+            return res
+        
     select_groupingperiod_pt = ViewPageTemplateFile("select_groupingperiod.pt")
     def select_groupingperiod(self, allow_blank=True, multiselect=False, style=None):
         self.style = style

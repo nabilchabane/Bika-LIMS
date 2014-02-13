@@ -11,7 +11,7 @@ that will be displayed to select criteria. This file is currently one of:
 Add the following files for your report:
 
     bika/lims/browser/reports/templates/your_report_name.pt
-    bika/lims/browser/reports/your_reort_name.py
+    bika/lims/browser/reports/your_report_name.py
 
 Report names should be in the same form as the existing ones:
 category_reportname.

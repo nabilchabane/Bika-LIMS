@@ -78,7 +78,7 @@ class BikaGenerator:
                        'bika_labproducts',
                        'bika_manufacturers',
                        'bika_sampleconditions',
-                       'bika_samplematrices',
+                       'bika_samplecategories',
                        'bika_samplingdeviations',
                        'bika_samplepoints',
                        'bika_sampletypes',
@@ -185,7 +185,7 @@ class BikaGenerator:
         mp(AddInvoice, ['Manager', 'LabManager'], 1)
         mp(AddMethod, ['Manager', 'LabManager'], 1)
         mp(AddSample, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
-        mp(AddSampleMatrix, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
+        mp(AddSampleCategory, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
         mp(AddSamplePartition, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
         mp(AddSamplePoint, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
         mp(AddSamplingDeviation, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
@@ -501,6 +501,7 @@ class BikaGenerator:
         addIndex(bac, 'getResultCaptureDate', 'DateIndex')
         addIndex(bac, 'getSampleTypeUID', 'FieldIndex')
         addIndex(bac, 'getSamplePointUID', 'FieldIndex')
+        addIndex(bac, 'getSampleCategoryUID', 'FieldIndex')
         addIndex(bac, 'getRetested', 'FieldIndex')
         addIndex(bac, 'getReferenceAnalysesGroupID', 'FieldIndex')
 
@@ -651,7 +652,7 @@ class BikaGenerator:
         at.setCatalogsByType('AnalysisService', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('AnalysisSpec', ['bika_setup_catalog', ])
         at.setCatalogsByType('SampleCondition', ['bika_setup_catalog'])
-        at.setCatalogsByType('SampleMatrix', ['bika_setup_catalog', ])
+        at.setCatalogsByType('SampleCategory', ['bika_setup_catalog', ])
         at.setCatalogsByType('SampleType', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('SamplePoint', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('SamplingDeviation', ['bika_setup_catalog', ])
@@ -719,6 +720,8 @@ class BikaGenerator:
         addIndex(bsc, 'getName', 'FieldIndex')
         addIndex(bsc, 'getPointOfCapture', 'FieldIndex')
         addIndex(bsc, 'getPrice', 'FieldIndex')
+        addIndex(bsc, 'getSampleCategoriesUID', 'KeywordIndex')
+        addIndex(bsc, 'getSampleCategoriesTitle', 'KeywordIndex')
         addIndex(bsc, 'getSamplePointTitle', 'KeywordIndex')
         addIndex(bsc, 'getSampleTypeTitle', 'KeywordIndex')
         addIndex(bsc, 'getSamplePointUID', 'FieldIndex')
@@ -772,6 +775,7 @@ class BikaGenerator:
         addColumn(bsc, 'getName')
         addColumn(bsc, 'getPointOfCapture')
         addColumn(bsc, 'getPrice')
+        addColumn(bsc, 'getSampleCategoriesTitle')
         addColumn(bsc, 'getSamplePointTitle')
         addColumn(bsc, 'getSampleTypeTitle')
         addColumn(bsc, 'getSamplePointUID')

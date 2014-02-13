@@ -58,7 +58,7 @@ class Report(BrowserView):
                                               'ReferenceDefinition',
                                               'ReferenceSample',
                                               'Sample',
-                                              'SampleMatrix',
+                                              'SampleCategory',
                                               'SamplePoint',
                                               'SampleType',
                                               'Supplier',

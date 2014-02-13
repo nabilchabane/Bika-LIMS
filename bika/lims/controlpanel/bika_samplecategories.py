@@ -7,29 +7,29 @@ from Products.CMFCore.utils import getToolByName
 from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
-from bika.lims.interfaces import ISampleMatrices
+from bika.lims.interfaces import ISampleCategories
 from plone.app.layout.globals.interfaces import IViewView
 from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaFolderSchema
-from bika.lims.permissions import AddSampleMatrix, ManageBika
+from bika.lims.permissions import AddSampleCategory, ManageBika
 from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.folder.folder import ATFolder, ATFolderSchema
 from zope.interface.declarations import implements
 
-class SampleMatricesView(BikaListingView):
+class SampleCategoriesView(BikaListingView):
     implements(IFolderContentsView, IViewView)
 
     def __init__(self, context, request):
-        super(SampleMatricesView, self).__init__(context, request)
+        super(SampleCategoriesView, self).__init__(context, request)
         self.catalog = 'bika_setup_catalog'
-        self.contentFilter = {'portal_type': 'SampleMatrix',
+        self.contentFilter = {'portal_type': 'SampleCategory',
                               'sort_on': 'sortable_title'}
         self.context_actions = {_('Add'): {
-            'url': 'createObject?type_name=SampleMatrix',
+            'url': 'createObject?type_name=SampleCategory',
             'icon': '++resource++bika.lims.images/add.png'
         }}
-        self.title = _("Sample Matrices")
-        self.icon = self.portal_url + "/++resource++bika.lims.images/samplematrix_big.png"
+        self.title = _("Sample Categories")
+        self.icon = self.portal_url + "/++resource++bika.lims.images/samplecategory_big.png"
         self.description = ""
         self.show_sort_column = False
         self.show_select_row = False
@@ -37,7 +37,7 @@ class SampleMatricesView(BikaListingView):
         self.pagesize = 25
 
         self.columns = {
-            'Title': {'title': _('Sample Matrix'),
+            'Title': {'title': _('Sample Category'),
                       'index': 'sortable_title'},
             'Description': {'title': _('Description'),
                             'index': 'description',
@@ -79,10 +79,10 @@ class SampleMatricesView(BikaListingView):
         return items
 
 schema = ATFolderSchema.copy()
-class SampleMatrices(ATFolder):
-    implements(ISampleMatrices)
+class SampleCategories(ATFolder):
+    implements(ISampleCategories)
     displayContentsTab = False
     schema = schema
 
 schemata.finalizeATCTSchema(schema, folderish = True, moveDiscussion = False)
-atapi.registerType(SampleMatrices, PROJECTNAME)
+atapi.registerType(SampleCategories, PROJECTNAME)

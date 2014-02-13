@@ -438,12 +438,12 @@ msgid "Sample Conditions"
 msgstr ""
 
 # File: ../profiles/default/controlpanel.xml, line: -1
-# File: ../profiles/default/types/SampleMatrices.xml, line: -1
-msgid "Sample Matrices"
+# File: ../profiles/default/types/SampleCategories.xml, line: -1
+msgid "Sample Categories"
 msgstr ""
 
-# File: ../profiles/default/types/SampleMatrix.xml, line: -1
-msgid "Sample Matrix"
+# File: ../profiles/default/types/SampleCategory.xml, line: -1
+msgid "Sample Category"
 msgstr ""
 
 # File: ../profiles/default/types/SamplePartition.xml, line: -1

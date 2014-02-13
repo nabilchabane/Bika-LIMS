@@ -192,18 +192,19 @@ Method
     Click Button  activate_transition
     Wait Until Page Contains  Changes saved.
 
-Sample Matrices
-    Go to  ${PLONEURL}/bika_setup/bika_samplematrices
+Sample Categories
+    Go to  ${PLONEURL}/bika_setup/bika_samplecategories
     Click link  Add
     Wait Until Page Contains Element  title
-    Input Text  title          New Object
-    Input Text  description    Temporary test object
+    Input Text  title           New Object
+    Input Text  description     Temporary test object
+    Select From List            SampleTypes:list  Soya
     Click Button  Save
     Wait Until Page Contains  Changes saved.
 
 
     # test workflow
-    Go to  ${PLONEURL}/bika_setup/bika_samplematrices
+    Go to  ${PLONEURL}/bika_setup/bika_samplecategories
     Select Checkbox  xpath=(//input[contains(@id, '_cb_')])[1]
     Click Button  deactivate_transition
     Wait Until Page Contains  Changes saved.
@@ -505,7 +506,7 @@ SampleTypes
     Input Text  RetentionPeriod.hours:record:ignore_empty  0
     Input Text  RetentionPeriod.minutes:record:ignore_empty  0
     Select Checkbox  Hazardous
-    Select from list  SampleMatrix:list
+    Select from list  SampleCategories:list  Clinical
     Input Text  Prefix  Prefix
     Input Text  MinimumVolume  20 ml
     Select from list  ContainerType:list
