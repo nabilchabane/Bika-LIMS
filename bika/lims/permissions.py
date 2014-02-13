@@ -26,6 +26,7 @@ AddSample = 'BIKA: Add Sample'
 AddSampleCategory = 'BIKA: Add SampleCategory'
 AddSamplePartition = 'BIKA: Add SamplePartition'
 AddSamplePoint = 'BIKA: Add SamplePoint'
+AddStorageLocation = 'BIKA: Add StorageLocation'
 AddSamplingDeviation = 'BIKA: Add SamplingDeviation'
 AddQuery = 'BIKA: Add Query'
 

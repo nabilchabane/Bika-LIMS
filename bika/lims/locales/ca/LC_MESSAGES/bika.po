@@ -1408,6 +1408,21 @@ msgid "Closed"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 49
+msgid "Code for the location"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 31
+msgid "Code for the site"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 73
+msgid "Code the the shelf"
+msgstr ""
+
+#
 # File: ../browser/reports/templates/administration_usershistory.pt, line: 79
 msgid "Comments"
 msgstr ""
@@ -1882,6 +1897,21 @@ msgid "Description of the actions made during the validation"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 55
+msgid "Description of the location"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 79
+msgid "Description of the shelf"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 37
+msgid "Description of the site"
+msgstr ""
+
+#
 # File: ../browser/templates/sample_sticker_large.pt, line: 89
 msgid "Deviation"
 msgstr ""
@@ -2028,6 +2058,11 @@ msgid "Duplicate analysis quality control graphs"
 msgstr ""
 
 #
+# File: ../exportimport/instruments/foss/winescan/__init__.py, line: 63
+msgid "Duplicated result for '%s', line %s"
+msgstr ""
+
+#
 # File: ../content/analysis.py, line: 87
 msgid "Duration"
 msgstr ""
@@ -2069,6 +2104,11 @@ msgstr ""
 #
 # File: ../content/client.py, line: 51
 msgid "Email subject line"
+msgstr ""
+
+#
+# File: ../exportimport/instruments/foss/winescan/__init__.py, line: 59
+msgid "Empty result for %s, column %s, line %s"
 msgstr ""
 
 #
@@ -2726,6 +2766,26 @@ msgid "Loaded"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 48
+msgid "Location Code"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 54
+msgid "Location Description"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 42
+msgid "Location Title"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 60
+msgid "Location Type"
+msgstr ""
+
+#
 # File: ../content/analysisrequest.py, line: 215
 # File: ../content/artemplate.py, line: 38
 msgid "Location where sample was taken"
@@ -2990,6 +3050,11 @@ msgid "More than one analysis found for %s and %s"
 msgstr ""
 
 #
+# File: ../exportimport/instruments/foss/winescan/ft120.py, line: 162
+msgid "More than one replica with no Mean for '%s'"
+msgstr ""
+
+#
 # File: ../exportimport/instruments/agilent/masshunter_quant.py, line: 416
 msgid "More than one sequence found for quantitative result %s"
 msgstr ""
@@ -3013,6 +3078,11 @@ msgid "No"
 msgstr ""
 
 #
+# File: ../exportimport/instruments/thermoscientific/gallery/__init__.py, line: 86
+msgid "No Analysis Code defined, line %s"
+msgstr ""
+
+#
 # File: ../exportimport/instruments/resultsimport.py, line: 440
 msgid "No Analysis Request with '%s' states neither QC analyses found for %s"
 msgstr ""
@@ -3025,6 +3095,11 @@ msgstr ""
 #
 # File: ../exportimport/instruments/agilent/masshunter_quant.py, line: 409
 msgid "No Data File found for quantitation result"
+msgstr ""
+
+#
+# File: ../exportimport/instruments/foss/winescan/__init__.py, line: 25
+msgid "No Sample ID found, line %s"
 msgstr ""
 
 #
@@ -3143,6 +3218,11 @@ msgid "No reference sample was selected."
 msgstr ""
 
 #
+# File: ../exportimport/instruments/foss/winescan/ft120.py, line: 167
+msgid "No replicas found for '%s'"
+msgstr ""
+
+#
 # File: ../exportimport/instruments/resultsimport.py, line: 184
 msgid "No results found"
 msgstr ""
@@ -3192,6 +3272,11 @@ msgstr ""
 #
 # File: ../config.py, line: 60
 msgid "Not Permitted"
+msgstr ""
+
+#
+# File: ../browser/analysisrequest.py, line: 2440
+msgid "Not available"
 msgstr ""
 
 #
@@ -3336,6 +3421,12 @@ msgstr ""
 #
 # File: ../exportimport/instruments/agilent/masshunter_quant.py, line: 318
 msgid "Orphan value in column %s (%s)"
+msgstr ""
+
+#
+# File: ../exportimport/instruments/foss/winescan/__init__.py, line: 37
+# File: ../exportimport/instruments/thermoscientific/gallery/__init__.py, line: 79
+msgid "Orphan value in column %s, line %s"
 msgstr ""
 
 #
@@ -3886,6 +3977,11 @@ msgstr ""
 #
 # File: ../browser/reports/templates/qualitycontrol.pt, line: 42
 msgid "Repeated analyses"
+msgstr ""
+
+#
+# File: ../exportimport/instruments/foss/winescan/ft120.py, line: 138
+msgid "Replicate '%s' already exists for '%s', line %s"
 msgstr ""
 
 #
@@ -4493,6 +4589,11 @@ msgid "Service keyword %s not found"
 msgstr ""
 
 #
+# File: ../exportimport/instruments/resultsimport.py, line: 328
+msgid "Service keywords: no matches found"
+msgstr ""
+
+#
 # File: ../browser/reports/selection_macros/__init__.py, line: 55
 # File: ../browser/worksheet.py, line: 990
 # File: ../browser/worksheetfolder.py, line: 121
@@ -4525,6 +4626,21 @@ msgid "Set up the laboratory analysis service results specifications"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 72
+msgid "Shelf Code"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 78
+msgid "Shelf Description"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 66
+msgid "Shelf Title"
+msgstr ""
+
+#
 # File: ../config.py, line: 83
 msgid "Shipping address"
 msgstr ""
@@ -4537,6 +4653,21 @@ msgstr ""
 #
 # File: ../content/labcontact.py, line: 28
 msgid "Signature"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 30
+msgid "Site Code"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 36
+msgid "Site Description"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 24
+msgid "Site Title"
 msgstr ""
 
 #
@@ -4609,6 +4740,18 @@ msgstr ""
 # File: ../browser/reports/productivity_analysesperclient.py, line: 72
 # File: ../browser/reports/productivity_analysespersampletype.py, line: 75
 msgid "Status"
+msgstr ""
+
+#
+# File: ../controlpanel/bika_storagelocations.py, line: 43
+# File: ../profiles/default/registry.xml, line: -1
+msgid "Storage Location"
+msgstr ""
+
+#
+# File: ../browser/client.py, line: 541
+# File: ../controlpanel/bika_storagelocations.py, line: 34
+msgid "Storage Locations"
 msgstr ""
 
 #
@@ -5006,6 +5149,21 @@ msgid "Title"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 43
+msgid "Title of location"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 67
+msgid "Title of the shelf"
+msgstr ""
+
+#
+# File: ../content/storagelocation.py, line: 25
+msgid "Title of the site"
+msgstr ""
+
+#
 # File: ../content/instrumentcalibration.py, line: 40
 # File: ../content/instrumentcertification.py, line: 54
 # File: ../content/instrumentmaintenancetask.py, line: 54
@@ -5096,6 +5254,11 @@ msgid "Type Error"
 msgstr ""
 
 #
+# File: ../content/storagelocation.py, line: 61
+msgid "Type of location"
+msgstr ""
+
+#
 # File: ../exportimport/instruments/resultsimport.py, line: 360
 msgid "Unable to create the Attachment Type %s "
 msgstr ""
@@ -5123,6 +5286,11 @@ msgstr ""
 #
 # File: ../browser/reports/productivity_analysestats.py, line: 138
 msgid "Undefined"
+msgstr ""
+
+#
+# File: ../exportimport/instruments/thermoscientific/gallery/__init__.py, line: 44
+msgid "Unexpected header format"
 msgstr ""
 
 #
@@ -5560,16 +5728,6 @@ msgstr ""
 #
 # File: ../browser/worksheet.py, line: 1056
 msgid "You must select an instrument"
-msgstr ""
-
-#
-# File: ../exportimport/instruments/logger.py, line: 11
-msgid "[ERROR] "
-msgstr ""
-
-#
-# File: ../exportimport/instruments/logger.py, line: 14
-msgid "[WARN] "
 msgstr ""
 
 #

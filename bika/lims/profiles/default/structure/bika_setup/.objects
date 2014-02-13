@@ -21,6 +21,7 @@ bika_sampleconditions,SampleConditions
 bika_samplecategories,SampleCategories
 bika_samplepoints,SamplePoints
 bika_sampletypes,SampleTypes
+bika_storagelocations,StorageLocations
 bika_samplingdeviations,SamplingDeviations
 bika_suppliers,Suppliers
 bika_worksheettemplates,WorksheetTemplates
