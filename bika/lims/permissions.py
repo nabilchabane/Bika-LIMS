@@ -147,3 +147,7 @@ ReopenBatch = 'BIKA: Reopen Batch'
 # Manage AR Imports
 # ----------------------------------------------
 ManageARImport = 'BIKA: Manage ARImport'
+
+# Manage AR Priorities
+# ----------------------------------------------
+ManageARPriority = 'BIKA: Manage ARPriority'
